@@ -4,8 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Scanner;
 
+/**
+ * 
+ * @author Jose Antonio
+ * @implNote Clase encargada de leer los ficheros.
+ */
 public class Reader {
 	private final String DEFAULT_EXT = ".txt";
 	private final String VALUE_SEPARATOR = " ";
@@ -20,65 +24,68 @@ public class Reader {
 		}
 	}
 
-	public void ReadFile() throws IOException {
-		Scanner fileReader = new Scanner(paramFile);
-		while (fileReader.hasNextLine()) {
-			String lineData = fileReader.nextLine();
-			System.out.println(lineData);
-		}
-		fileReader.close();
-	}
-
-	// En verdad se podria cambiar a un hashmap con pair<int,int> para la clave pero
-	// tengo sueño.
-	// También estaría bien usar un bufferedReader en vez del Scanner
-	public float[][] txtToMatrix(Integer size, Integer numberElements) throws IOException {
-		Scanner fileReader = new Scanner(paramFile);
-
-		size = fileReader.nextInt();
-		numberElements = fileReader.nextInt();
-		System.out.println(numberElements);
-		float[][] matrix = new float[size][size];
-		fileReader.nextLine();
-
-		while (fileReader.hasNextLine()) {
-			String tempBufferString = fileReader.nextLine();
-			String[] splitStrings = tempBufferString.split(" ");
-			matrix[Integer.parseInt(splitStrings[0])][Integer.parseInt(splitStrings[1])] = Float
-					.parseFloat(splitStrings[2]);
-		}
-
-		fileReader.close();
-		return matrix;
-	}
-
-	public Data txtToMatrixBR() throws IOException {
-
+	public Param readParam() throws IOException {
 		FileReader r = new FileReader(paramFile);
 		BufferedReader reader = new BufferedReader(r);
+		String bufferString = reader.readLine();
+		Param auxParam = new Param();
 
-		String lineData = reader.readLine();
+		if (!bufferString.equals("[Param]")) {
+			reader.close();
+			System.out.println(bufferString);
+			throw new IOException("El fichero especificado no es un fichero de parametros");
+		} else {
+			bufferString = reader.readLine();
+			try {
+				while (bufferString != null) { // Leemos lineas y la incluimos en la matriz de Data.
+					auxParam.parseParam(bufferString);
+					bufferString = reader.readLine();
+				}
+			} catch (Exception e) {
+				reader.close();
+				System.err.println(e.getMessage());
+			}
+		}
+		return auxParam;
+
+	}
+
+	/**
+	 * 
+	 * @return Data con todos los datos leidos.
+	 * @throws IOException: En caso de error de lectura.
+	 */
+	public Data readData() throws IOException {
+
+		FileReader r = new FileReader(paramFile);
+		BufferedReader reader = new BufferedReader(r); // BufferedReader para optimizar el rendimiento de lectura.
+
+		String lineData = reader.readLine(); // Leemos la primera linea.
 		if (lineData == null) {
 			reader.close();
 			throw new IOException("Formato del fichero erroneo");
 		}
-		String[] lineValues = lineData.split(VALUE_SEPARATOR);
+
+		String[] lineValues = lineData.split(VALUE_SEPARATOR); // Separamos el string "Linea" en varios string separados
+																// por VALUE_SEPARATOR.
 		if (lineValues.length != 2) {
 			reader.close();
 			throw new IOException("Formato del fichero erroneo");
 		}
+
 		int size = Integer.parseInt(lineValues[0]);
-		int numElements = Integer.parseInt(lineValues[1]);
+		int numElements = Integer.parseInt(lineValues[1]); // Convertimos de String a Int.
 		if (size <= 0 || numElements <= 0) {
 			reader.close();
 			throw new IOException("Valores iniciales no permitidos");
 		}
 
 		lineData = reader.readLine();
-		Data inputValues = new Data(size, numElements);
+		Data inputValues = new Data(size, numElements); // Creamos un "Data" con el tamaño y el numElementos leidos de
+														// la primera linea.
 		int mRow, mCol;
 		try {
-			while (lineData != null) {
+			while (lineData != null) { // Leemos lineas y la incluimos en la matriz de Data.
 
 				lineValues = lineData.split(VALUE_SEPARATOR);
 				mRow = Integer.parseInt(lineValues[0]);
@@ -91,7 +98,7 @@ public class Reader {
 			throw new IOException("Valores de matriz no permitidos");
 		}
 
-		reader.close();
-		return inputValues;
+		reader.close(); // Cerramos el lector.
+		return inputValues; // Devolvemos la variable Data necesaria.
 	}
 }

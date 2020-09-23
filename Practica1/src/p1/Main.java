@@ -4,15 +4,14 @@ import java.io.IOException;
 
 public class Main {
 	public static void main(String[] args) {
-		String fileName = "GKD-c_1_n500_m50";
+		String fileName = "parameters";
 		String extension = ".txt";
 		Reader params = new Reader(fileName, "", extension);
 		try {
-			Data input = params.txtToMatrixBR();
-			System.out.println("size=" + input.getSize() + "\nselection=" + input.getSelection());
-			input.printRow(1);
+			Param input = params.readParam();
+			System.out.println(input.getAlgoritmo());
 		} catch (IOException e) {
-			System.out.println("Could not read file: " + e.getMessage());
+			System.out.println("No se puedo leer el fichero	: " + e.getMessage());
 		}
 	}
 }

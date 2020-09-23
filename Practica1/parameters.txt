@@ -1,3 +1,2 @@
-param1=x
-param2=y
-param3=z
+[Param]
+algoritmo=greedy
