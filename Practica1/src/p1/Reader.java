@@ -1,11 +1,14 @@
 package p1;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
 public class Reader {
 	private final String DEFAULT_EXT = ".txt";
+	private final String VALUE_SEPARATOR = " ";
 	private File paramFile;
 
 	public Reader(String file, String path, String ext) {
@@ -47,5 +50,48 @@ public class Reader {
 
 		fileReader.close();
 		return matrix;
+	}
+
+	public Data txtToMatrixBR() throws IOException {
+
+		FileReader r = new FileReader(paramFile);
+		BufferedReader reader = new BufferedReader(r);
+
+		String lineData = reader.readLine();
+		if (lineData == null) {
+			reader.close();
+			throw new IOException("Formato del fichero erroneo");
+		}
+		String[] lineValues = lineData.split(VALUE_SEPARATOR);
+		if (lineValues.length != 2) {
+			reader.close();
+			throw new IOException("Formato del fichero erroneo");
+		}
+		int size = Integer.parseInt(lineValues[0]);
+		int numElements = Integer.parseInt(lineValues[1]);
+		if (size <= 0 || numElements <= 0) {
+			reader.close();
+			throw new IOException("Valores iniciales no permitidos");
+		}
+
+		lineData = reader.readLine();
+		Data inputValues = new Data(size, numElements);
+		int mRow, mCol;
+		try {
+			while (lineData != null) {
+
+				lineValues = lineData.split(VALUE_SEPARATOR);
+				mRow = Integer.parseInt(lineValues[0]);
+				mCol = Integer.parseInt(lineValues[1]);
+				inputValues.addValue(mRow, mCol, Float.parseFloat(lineValues[2]));
+				lineData = reader.readLine();
+			}
+		} catch (Exception e) {
+			reader.close();
+			throw new IOException("Valores de matriz no permitidos");
+		}
+
+		reader.close();
+		return inputValues;
 	}
 }
