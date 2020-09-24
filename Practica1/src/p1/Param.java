@@ -7,10 +7,10 @@ package p1;
  */
 public class Param {
 	private String algoritmo;
-	private String VALUE_SEPARATOR = "=";
-
+	private int seed;
+	
 	public void parseParam(String linea) throws IllegalArgumentException {
-		String[] separeStrings = linea.split(VALUE_SEPARATOR);
+		String[] separeStrings = linea.split(Constants.PARAM_SEPARATOR);
 
 		switch (separeStrings[0]) {
 
@@ -18,6 +18,14 @@ public class Param {
 			algoritmo = separeStrings[1];
 			break;
 
+		case "seed":
+			try {
+				seed = Integer.parseInt(separeStrings[1]);
+				break;
+			}catch(NumberFormatException e) {
+				throw new IllegalArgumentException(e.getMessage());
+			}
+			
 		default:
 			throw new IllegalArgumentException(separeStrings[0] + " no es un parametro válido");
 
@@ -26,6 +34,10 @@ public class Param {
 
 	public String getAlgoritmo() {
 		return algoritmo;
+	}
+	
+	public int getSeed() {
+		return seed;
 	}
 
 }

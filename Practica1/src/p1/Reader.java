@@ -11,14 +11,12 @@ import java.io.IOException;
  * @implNote Clase encargada de leer los ficheros.
  */
 public class Reader {
-	private final String DEFAULT_EXT = ".txt";
-	private final String VALUE_SEPARATOR = " ";
 	private File paramFile;
 
 	public Reader(String file, String path, String ext) {
 		if (!ext.contains(".")) {
 //			System.out.println("Invalid extension, using default: " + DEFAULT_EXT);
-			paramFile = new File(path + file + DEFAULT_EXT);
+			paramFile = new File(path + file + Constants.DEFAULT_EXT);
 		} else {
 			paramFile = new File(path + file + ext);
 		}
@@ -66,7 +64,7 @@ public class Reader {
 			throw new IOException("Formato del fichero erroneo");
 		}
 
-		String[] lineValues = lineData.split(VALUE_SEPARATOR); // Separamos el string "Linea" en varios string separados
+		String[] lineValues = lineData.split(Constants.DATA_SEPARATOR); // Separamos el string "Linea" en varios string separados
 																// por VALUE_SEPARATOR.
 		if (lineValues.length != 2) {
 			reader.close();
@@ -87,7 +85,7 @@ public class Reader {
 		try {
 			while (lineData != null) { // Leemos lineas y la incluimos en la matriz de Data.
 
-				lineValues = lineData.split(VALUE_SEPARATOR);
+				lineValues = lineData.split(Constants.DATA_SEPARATOR);
 				mRow = Integer.parseInt(lineValues[0]);
 				mCol = Integer.parseInt(lineValues[1]);
 				inputValues.addValue(mRow, mCol, Float.parseFloat(lineValues[2]));
