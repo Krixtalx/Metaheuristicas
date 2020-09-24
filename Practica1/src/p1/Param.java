@@ -1,5 +1,7 @@
 package p1;
 
+import java.util.Random;
+
 /**
  * 
  * @author Jose Antonio
@@ -8,6 +10,7 @@ package p1;
 public class Param {
 	private String algoritmo;
 	private int seed;
+	private Random randGenerator;
 	
 	public void parseParam(String linea) throws IllegalArgumentException {
 		String[] separeStrings = linea.split(Constants.PARAM_SEPARATOR);
@@ -21,6 +24,7 @@ public class Param {
 		case "seed":
 			try {
 				seed = Integer.parseInt(separeStrings[1]);
+				randGenerator = new Random(seed);
 				break;
 			}catch(NumberFormatException e) {
 				throw new IllegalArgumentException(e.getMessage());
@@ -40,4 +44,7 @@ public class Param {
 		return seed;
 	}
 
+	public int generateInt(int max) {
+		return randGenerator.nextInt(max);
+	}
 }
