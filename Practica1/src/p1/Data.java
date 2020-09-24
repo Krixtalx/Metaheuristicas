@@ -34,8 +34,9 @@ public class Data {
 	}
 
 	/**
-	 * Muestra una línea de la matriz por la salida estándar
-	 * @param r Línea a mostrar
+	 * Muestra una linea de la matriz por la salida estandar
+	 * 
+	 * @param r Linea a mostrar
 	 */
 	public void printRow(int r) {
 		for (int i = 0; i < valueMatrix[r].length; i++) {
@@ -44,7 +45,7 @@ public class Data {
 	}
 
 	/*
-	 * Muestra la matriz por la salida estándar
+	 * Muestra la matriz por la salida estandar
 	 */
 	public void printMatrix() {
 		for (int i = 0; i < valueMatrix.length; i++) {

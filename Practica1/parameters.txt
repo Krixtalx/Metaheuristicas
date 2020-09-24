@@ -1,3 +1,4 @@
 [Param]
-algoritmo=greedy
-seed=420
+algoritmo=mayonesa
+seed=77690720
+dataFile=GKD-c_1_n500_m50

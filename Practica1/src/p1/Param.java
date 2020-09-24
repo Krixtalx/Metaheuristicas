@@ -9,9 +9,10 @@ import java.util.Random;
  */
 public class Param {
 	private String algoritmo;
+	private String dataFile;
 	private int seed;
 	private Random randGenerator;
-	
+
 	public void parseParam(String linea) throws IllegalArgumentException {
 		String[] separeStrings = linea.split(Constants.PARAM_SEPARATOR);
 
@@ -26,10 +27,14 @@ public class Param {
 				seed = Integer.parseInt(separeStrings[1]);
 				randGenerator = new Random(seed);
 				break;
-			}catch(NumberFormatException e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException(e.getMessage());
 			}
-			
+
+		case "dataFile":
+			dataFile = separeStrings[1];
+			break;
+
 		default:
 			throw new IllegalArgumentException(separeStrings[0] + " no es un parametro válido");
 
@@ -39,12 +44,16 @@ public class Param {
 	public String getAlgoritmo() {
 		return algoritmo;
 	}
-	
+
 	public int getSeed() {
 		return seed;
 	}
 
 	public int generateInt(int max) {
 		return randGenerator.nextInt(max);
+	}
+
+	public String getDataFile() {
+		return dataFile;
 	}
 }
