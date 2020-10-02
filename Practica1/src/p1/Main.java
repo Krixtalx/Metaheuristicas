@@ -12,10 +12,23 @@ public class Main {
 			Reader dataReader = new Reader(parametros.getDataFile(), "", Constants.DEFAULT_EXT);
 			Data problemData = dataReader.readData();
 
-			ArrayList<Integer> solucion = Solver.Greedy(problemData, parametros);
-			for (int i = 0; i < solucion.size(); i++) {
-				System.out.println("Solucion " + i + ": " + solucion.get(i));
+			switch (parametros.getAlgoritmo()) {
+			case "Greedy":
+				ArrayList<Integer> solucion = Solver.Greedy(problemData, parametros);
+				for (int i = 0; i < solucion.size(); i++) {
+					System.out.println("Solucion " + i + ": " + solucion.get(i));
+				}
+				break;
+				
+			case "Busqueda Local":
+				ArrayList<Integer> solucion2 = Solver.BusquedaLocal(problemData, parametros);
+				for (int i = 0; i < solucion2.size(); i++) {
+					System.out.println("Solucion " + i + ": " + solucion2.get(i));
+				}
+				break;
+				
 			}
+			
 		} catch (IOException e) {
 			System.out.println("No se puedo leer el fichero	: " + e.getMessage());
 		}

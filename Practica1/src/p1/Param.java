@@ -12,6 +12,7 @@ public class Param {
 	private String dataFile;
 	private int seed;
 	private Random randGenerator;
+	private int iteracciones;
 
 	public void parseParam(String linea) throws IllegalArgumentException {
 		String[] separeStrings = linea.split(Constants.PARAM_SEPARATOR);
@@ -34,6 +35,12 @@ public class Param {
 		case "dataFile":
 			dataFile = separeStrings[1];
 			break;
+			
+		case "iteracciones":
+			iteracciones = Integer.parseInt(separeStrings[1]);
+			if(iteracciones == -1) 
+				iteracciones = Integer.MAX_VALUE;
+			break;
 
 		default:
 			throw new IllegalArgumentException(separeStrings[0] + " no es un parametro válido");
@@ -55,5 +62,9 @@ public class Param {
 
 	public String getDataFile() {
 		return dataFile;
+	}
+	
+	public int getIteraciones() {
+		return iteracciones;
 	}
 }
