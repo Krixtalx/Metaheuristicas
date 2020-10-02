@@ -21,7 +21,7 @@ public class Solver {
 	public static ArrayList<Integer> Greedy(Data data, Param param) {
 		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
 		LinkedList<Integer> candidatos = new LinkedList<>(); // Candidatos
-		for (int i = 0; i < data.getSelection(); i++) {
+		for (int i = 0; i < data.getSize(); i++) {
 			candidatos.add(i);
 		}
 		seleccionados.add(param.generateInt(data.getSize() - 1)); // Restamos 1 ya que el ultimo
@@ -77,9 +77,6 @@ public class Solver {
 		}else {
 			maximoIteraciones = candidatos.size();
 		}
-		
-		
-		
 		for (int j = 0; j < seleccionados.size(); j++) {
 			posCambio = menorDistancia(seleccionados, matriz); //Seleccionado que va a cambiarse
 			elemCambio = seleccionados.get(posCambio);
