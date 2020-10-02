@@ -1,5 +1,5 @@
 [Param]
 algoritmo=Busqueda Local
 seed=77690720
-dataFile=GKD-c_1_n500_m50
+dataFile=datosPrueba
 iteracciones=150

@@ -62,7 +62,7 @@ public class Solver {
 		}
 		
 		for(int i = 0; i < data.getSelection(); i++) {
-			int elegido = candidatos.remove(param.generateInt(candidatos.size()));
+			int elegido = candidatos.remove(param.generateInt(candidatos.size()-1));
 			seleccionados.add(elegido); //Seleccionamos aleatoriamente entre los candidatos
 			vecino.add(elegido);
 		}
@@ -95,6 +95,68 @@ public class Solver {
 		}
 		System.out.println("Distancia M: " + sumaActual);
 		return seleccionados;
+	}
+	
+	public static ArrayList<Integer> NuevaBusquedaLocal(Data data, Param param) {
+		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
+		LinkedList<Integer> candidatos = new LinkedList<>(); // Candidatos
+		ArrayList<Integer> vecino = new ArrayList<>();
+		SortedPairArray<Float, Integer> ordenCambio;
+		for (int i = 0; i < data.getSize(); i++) {
+			candidatos.add(i);
+		}
+		for(int i = 0; i < data.getSelection(); i++) {
+			int elegido = candidatos.remove(param.generateInt(candidatos.size()-1));
+			seleccionados.add(elegido); //Seleccionamos aleatoriamente entre los candidatos
+			vecino.add(elegido);
+		}
+		System.out.println("Random inicio:\n" + seleccionados.toString());
+		float[][] matriz = data.getMatrix();
+		int it = 0, siguiente = 0;
+		int posCambio, elemCambio;
+		float distCambio, distVecino;
+		float sumaTotal = calcularDistancia(seleccionados, matriz), sumaTemp, sumaVecino;
+		boolean infIt = param.getIteraciones() == -1, vecinoEncontrado;
+		
+		ordenCambio = distancias(seleccionados, matriz);
+		while(it < param.getIteraciones() && siguiente < ordenCambio.size()) {
+			vecinoEncontrado = false;
+			//sumaTemp = sumaTotal - ordenCambio.get(siguiente).getKey();
+			distCambio = ordenCambio.get(siguiente).getKey();
+			posCambio = ordenCambio.get(siguiente).getValue();
+			for (int i = 0; i < candidatos.size(); i++) {
+				it++;
+				vecino.set(siguiente, candidatos.get(i));
+				distVecino = calcularDistanciaElemento(candidatos.get(i), vecino, matriz);
+				System.out.println("probando: " + candidatos.get(i) + "-"+ distVecino + " >= " + ordenCambio.get(siguiente).getValue() + "-" + distCambio);
+				if(distVecino >= distCambio) {
+					candidatos.add(seleccionados.set(posCambio, candidatos.remove(i)));
+//					candidatos.add(seleccionados.remove(siguiente));
+//					ordenCambio.remove(siguiente);
+//					seleccionados.add(candidatos.remove(i));
+					vecinoEncontrado = true;
+					System.out.println("nuevo: " + seleccionados);
+					break; //TODO: me da pereza cambiarlo para que no use break xd
+				}
+			}
+			if(vecinoEncontrado) {
+				siguiente = 0;
+				ordenCambio = distancias(seleccionados, matriz);
+			}else {
+				siguiente++;
+			}
+		}
+		
+		System.out.println("dis=" + calcularDistancia(seleccionados, matriz));
+		return seleccionados;
+	}
+	
+	private static SortedPairArray<Float, Integer> distancias(List<Integer> seleccion, float[][] matriz){
+		SortedPairArray<Float, Integer> res = new SortedPairArray<Float, Integer>();
+		for (int i = 0; i < seleccion.size(); i++) {
+			res.put(calcularDistanciaElemento(seleccion.get(i), seleccion, matriz), i);
+		}
+		return res;
 	}
 	
 	private static int menorDistancia(List<Integer> seleccion, float[][] matriz) {
@@ -130,7 +192,7 @@ public class Solver {
 		float suma = 0;
 		
 		for (int i = 0; i < seleccion.size(); i++) {
-			if(i != elemento) {
+			if(seleccion.get(i) != elemento) {
 				suma += valorMatriz(matriz, seleccion.get(i), elemento);
 			}
 		}

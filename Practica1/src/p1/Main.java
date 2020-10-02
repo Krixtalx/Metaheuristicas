@@ -21,7 +21,7 @@ public class Main {
 				break;
 				
 			case "Busqueda Local":
-				ArrayList<Integer> solucion2 = Solver.BusquedaLocal(problemData, parametros);
+				ArrayList<Integer> solucion2 = Solver.NuevaBusquedaLocal(problemData, parametros);
 				for (int i = 0; i < solucion2.size(); i++) {
 					System.out.println("Solucion " + i + ": " + solucion2.get(i));
 				}
