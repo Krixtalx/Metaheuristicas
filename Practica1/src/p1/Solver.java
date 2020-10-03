@@ -110,39 +110,38 @@ public class Solver {
 			seleccionados.add(elegido); //Seleccionamos aleatoriamente entre los candidatos
 			vecino.add(elegido);
 		}
+		
 		System.out.println("Random inicio:\n" + seleccionados.toString());
 		float[][] matriz = data.getMatrix();
-		int it = 0, siguiente = 0;
-		int posCambio, elemCambio;
+		int it = 0, siguiente = 0, posCambio;
 		float distCambio, distVecino;
-		float sumaTotal = calcularDistancia(seleccionados, matriz), sumaTemp, sumaVecino;
-		boolean infIt = param.getIteraciones() == -1, vecinoEncontrado;
+		boolean vecinoEncontrado = false;
 		
 		ordenCambio = distancias(seleccionados, matriz);
+		//Itera un numero determinado de veces, o hasta recorrer todo el vecindario
 		while(it < param.getIteraciones() && siguiente < ordenCambio.size()) {
-			vecinoEncontrado = false;
-			//sumaTemp = sumaTotal - ordenCambio.get(siguiente).getKey();
 			distCambio = ordenCambio.get(siguiente).getKey();
 			posCambio = ordenCambio.get(siguiente).getValue();
+			//Para cada cambio, obtiene la distancia del nuevo elemento
 			for (int i = 0; i < candidatos.size(); i++) {
 				it++;
-				vecino.set(siguiente, candidatos.get(i));
+				vecino.set(posCambio, candidatos.get(i));
 				distVecino = calcularDistanciaElemento(candidatos.get(i), vecino, matriz);
-				System.out.println("probando: " + candidatos.get(i) + "-"+ distVecino + " >= " + ordenCambio.get(siguiente).getValue() + "-" + distCambio);
-				if(distVecino >= distCambio) {
+//				System.out.println("probando: " + candidatos.get(i) + "-"+ distVecino + " >= " + ordenCambio.get(siguiente).getValue() + "-" + distCambio);
+				if(distVecino >= distCambio) { //Si el vecino es mejor, lo intercambia
 					candidatos.add(seleccionados.set(posCambio, candidatos.remove(i)));
-//					candidatos.add(seleccionados.remove(siguiente));
-//					ordenCambio.remove(siguiente);
-//					seleccionados.add(candidatos.remove(i));
 					vecinoEncontrado = true;
-					System.out.println("nuevo: " + seleccionados);
-					break; //TODO: me da pereza cambiarlo para que no use break xd
+//					System.out.println("nuevo: " + seleccionados);
+					i = candidatos.size();
+				}else { //Si no, reestablece el elemento original y continua explorando
+					vecino.set(posCambio, seleccionados.get(posCambio));
 				}
 			}
-			if(vecinoEncontrado) {
+			if(vecinoEncontrado) { //Si se ha encontrado un vecino mejor, reinicia la busqueda
 				siguiente = 0;
 				ordenCambio = distancias(seleccionados, matriz);
-			}else {
+				vecinoEncontrado = false;
+			}else { //Si no, vuelve a intentarlo con el siguiente elemento de la solucion
 				siguiente++;
 			}
 		}
