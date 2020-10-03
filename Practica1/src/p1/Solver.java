@@ -12,6 +12,10 @@ import java.util.List;
  */
 public class Solver {
 
+	//-----------------------------------------------------------------------------
+	//								ALGORITMOS
+	//-----------------------------------------------------------------------------
+	
 	/**
 	 * Obtiene una solucion al problema mediante un algoritmo voraz, seleccionando
 	 * los elementos que mas aporten
@@ -53,51 +57,13 @@ public class Solver {
 		return seleccionados;
 	}
 	
-	public static ArrayList<Integer> BusquedaLocal(Data data, Param param) {
-		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
-		LinkedList<Integer> candidatos = new LinkedList<>(); // Candidatos
-		ArrayList<Integer> vecino = new ArrayList<>();
-		for (int i = 0; i < data.getSize(); i++) {
-			candidatos.add(i);
-		}
-		
-		for(int i = 0; i < data.getSelection(); i++) {
-			int elegido = candidatos.remove(param.generateInt(candidatos.size()-1));
-			seleccionados.add(elegido); //Seleccionamos aleatoriamente entre los candidatos
-			vecino.add(elegido);
-		}
-	
-		float[][] matriz = data.getMatrix();
-		float sumaActual = calcularDistancia(seleccionados, matriz);
-		float sumaTemp;
-		int posCambio, elemCambio, maximoIteraciones;
-		
-		if(param.getIteraciones() < candidatos.size()) {
-			maximoIteraciones = param.getIteraciones();
-		}else {
-			maximoIteraciones = candidatos.size();
-		}
-		for (int j = 0; j < seleccionados.size(); j++) {
-			posCambio = menorDistancia(seleccionados, matriz); //Seleccionado que va a cambiarse
-			elemCambio = seleccionados.get(posCambio);
-			for(int i = 0; i < maximoIteraciones; i++) {
-				
-				vecino.set(posCambio, candidatos.get(i));
-				sumaTemp = sumaActual - calcularDistanciaElemento(elemCambio, seleccionados, matriz) + calcularDistanciaElemento(candidatos.get(i), vecino, matriz);
-				
-				//Si el vecino es mejor, desplazar
-				if(sumaActual < sumaTemp) {
-					sumaActual = sumaTemp;
-					seleccionados.set(posCambio, candidatos.remove(i));
-					candidatos.add(elemCambio);
-				}
-			}
-		}
-		System.out.println("Distancia M: " + sumaActual);
-		return seleccionados;
-	}
-	
-	public static ArrayList<Integer> NuevaBusquedaLocal(Data data, Param param) {
+	/**
+	 * Obtiene una solucion al problema mediante un algoritmo de busqueda local,
+	 * explorando el vecindario de una solucion inicial aleatoria
+	 * 
+	 * @return ArrayList con los elementos solucion
+	 */
+	public static ArrayList<Integer> busquedaLocal(Data data, Param param) {
 		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
 		LinkedList<Integer> candidatos = new LinkedList<>(); // Candidatos
 		ArrayList<Integer> vecino = new ArrayList<>();
@@ -127,11 +93,9 @@ public class Solver {
 				it++;
 				vecino.set(posCambio, candidatos.get(i));
 				distVecino = calcularDistanciaElemento(candidatos.get(i), vecino, matriz);
-//				System.out.println("probando: " + candidatos.get(i) + "-"+ distVecino + " >= " + ordenCambio.get(siguiente).getValue() + "-" + distCambio);
 				if(distVecino >= distCambio) { //Si el vecino es mejor, lo intercambia
 					candidatos.add(seleccionados.set(posCambio, candidatos.remove(i)));
 					vecinoEncontrado = true;
-//					System.out.println("nuevo: " + seleccionados);
 					i = candidatos.size();
 				}else { //Si no, reestablece el elemento original y continua explorando
 					vecino.set(posCambio, seleccionados.get(posCambio));
@@ -146,10 +110,22 @@ public class Solver {
 			}
 		}
 		
-		System.out.println("dis=" + calcularDistancia(seleccionados, matriz));
+		System.out.println("Distancia M: " + calcularDistancia(seleccionados, matriz));
 		return seleccionados;
 	}
 	
+
+	//-----------------------------------------------------------------------------
+	//								METODOS PRIVADOS
+	//-----------------------------------------------------------------------------
+	
+	/**
+	 * Calcula la distancia de cada elemento de la seleccion dada
+	 * 
+	 * @param seleccion Conjunto de elementos
+	 * @param matriz Matriz de distancias
+	 * @return SortedPairArray con el valor de cada elemento
+	 */
 	private static SortedPairArray<Float, Integer> distancias(List<Integer> seleccion, float[][] matriz){
 		SortedPairArray<Float, Integer> res = new SortedPairArray<Float, Integer>();
 		for (int i = 0; i < seleccion.size(); i++) {
@@ -157,26 +133,14 @@ public class Solver {
 		}
 		return res;
 	}
-	
-	private static int menorDistancia(List<Integer> seleccion, float[][] matriz) {
-		int sel = -1;
-		float suma, menorSuma = Integer.MAX_VALUE;
-		for(int i = 0; i < seleccion.size(); i++) {
-			suma = 0;
-			for(int j = 0; j < seleccion.size(); j++) {
-				if(i != j) {
-					suma += valorMatriz(matriz, seleccion.get(i), seleccion.get(j));
-				}
-			}
-			if(suma < menorSuma) {
-				menorSuma = suma;
-				sel = i;
-			}
-		}
-		
-		return sel;
-	}
 
+	/**
+	 * Calcula la distancia del conjunto de elementos seleccionados
+	 * 
+	 * @param seleccion Conjunto de elementos
+	 * @param matriz Matriz de distancias
+	 * @return Distancia del conjuto
+	 */
 	private static float calcularDistancia(List<Integer> seleccion, float[][] matriz) {
 		float suma = 0;
 		for(int i = 0; i < seleccion.size(); i++) {
@@ -187,15 +151,21 @@ public class Solver {
 		return suma;
 	}
 	
+	/**
+	 * Calcula la distancia de un elemento respecto una selección
+	 * 
+	 * @param elemento Elemento del que calcular la distancia
+	 * @param seleccion Conjunto de elementos
+	 * @param matriz Matriz de distancias
+	 * @return Distancia del elemento
+	 */
 	private static float calcularDistanciaElemento(int elemento, List<Integer> seleccion, float[][] matriz) {
 		float suma = 0;
-		
 		for (int i = 0; i < seleccion.size(); i++) {
 			if(seleccion.get(i) != elemento) {
 				suma += valorMatriz(matriz, seleccion.get(i), elemento);
 			}
 		}
-		
 		return suma;
 	}
 	/**
@@ -206,7 +176,7 @@ public class Solver {
 	 * @param c
 	 * @return float
 	 */
-	public static float valorMatriz(float[][] m, int f, int c) {
+	private static float valorMatriz(float[][] m, int f, int c) {
 		if (f < c) {
 			return m[f][c];
 		} else {
