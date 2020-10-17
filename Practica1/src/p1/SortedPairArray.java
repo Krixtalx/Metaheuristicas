@@ -44,7 +44,7 @@ public class SortedPairArray<T extends Comparable<T>, U> {
 	private ArrayList<Pair<T, U>> list;
 	
 	/**
-	 * Construye una lista vacía de pares
+	 * Construye una lista vacÃ­a de pares
 	 */
 	public SortedPairArray() {
 		list = new ArrayList<Pair<T, U>>();

@@ -1,5 +1,5 @@
 [Param]
 algoritmo=Busqueda Local
-seed=77690720
-dataFile=GKD-c_1_n500_m50
+seed=77688092
+dataFile=MDG-a_21_n2000_m200
 iteracciones=-1

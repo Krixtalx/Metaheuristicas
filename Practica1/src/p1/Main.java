@@ -2,6 +2,7 @@ package p1;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Main {
 	public static void main(String[] args) {
@@ -15,22 +16,18 @@ public class Main {
 			switch (parametros.getAlgoritmo()) {
 			case "Greedy":
 				ArrayList<Integer> solucion = Solver.Greedy(problemData, parametros);
-				for (int i = 0; i < solucion.size(); i++) {
-					System.out.println("Solucion " + i + ": " + solucion.get(i));
-				}
+				System.out.println("Solucion: " + solucion);
 				break;
 				
 			case "Busqueda Local":
 				ArrayList<Integer> solucion2 = Solver.busquedaLocal(problemData, parametros);
-				for (int i = 0; i < solucion2.size(); i++) {
-					System.out.println("Solucion " + i + ": " + solucion2.get(i));
-				}
+				System.out.println("Solucion: " + solucion2);
 				break;
 				
 			}
 			
 		} catch (IOException e) {
-			System.out.println("No se puedo leer el fichero	: " + e.getMessage());
+			System.out.println("No se puede leer el fichero	: " + e.getMessage());
 		}
 	}
 }
