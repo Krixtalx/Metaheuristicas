@@ -2,7 +2,6 @@ package p1;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Main {
 	public static void main(String[] args) {
@@ -24,6 +23,10 @@ public class Main {
 				System.out.println("Solucion: " + solucion2);
 				break;
 				
+			case "Busqueda Tabu":
+				ArrayList<Integer> solucion3 = Solver.busquedaTabu(problemData, parametros);
+				System.out.println("Solucion: " + solucion3);
+				break;
 			}
 			
 		} catch (IOException e) {

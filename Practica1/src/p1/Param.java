@@ -12,7 +12,10 @@ public class Param {
 	private String dataFile;
 	private int seed;
 	private Random randGenerator;
-	private int iteracciones;
+	private int iteraciones;
+	private int tenenciaTabu;
+	private int itSinMejora;
+	private int tamVecindario;
 
 	public void parseParam(String linea) throws IllegalArgumentException {
 		String[] separeStrings = linea.split(Constants.PARAM_SEPARATOR);
@@ -37,11 +40,23 @@ public class Param {
 			break;
 			
 		case "iteracciones":
-			iteracciones = Integer.parseInt(separeStrings[1]);
-			if(iteracciones == -1) 
-				iteracciones = Integer.MAX_VALUE;
+			iteraciones = Integer.parseInt(separeStrings[1]);
+			if(iteraciones == -1) 
+				iteraciones = Integer.MAX_VALUE;
 			break;
-
+			
+		case "tenenciaTabu":
+			tenenciaTabu = Integer.parseInt(separeStrings[1]);
+			break;
+			
+		case "tamVecindario":
+			tamVecindario = Integer.parseInt(separeStrings[1]);
+			break;
+			
+		case "itSinMejora":
+			itSinMejora = Integer.parseInt(separeStrings[1]);
+			break;
+			
 		default:
 			throw new IllegalArgumentException(separeStrings[0] + " no es un parametro válido");
 
@@ -59,12 +74,28 @@ public class Param {
 	public int generateInt(int max) {
 		return randGenerator.nextInt(max);
 	}
+	
+	public boolean generateBool() {
+		return randGenerator.nextBoolean();
+	}
 
 	public String getDataFile() {
 		return dataFile;
 	}
 	
 	public int getIteraciones() {
-		return iteracciones;
+		return iteraciones;
+	}
+	
+	public int getTenenciaTabu() {
+		return tenenciaTabu;
+	}
+	
+	public int getTamVecindario() {
+		return tamVecindario;
+	}
+	
+	public int getItSinMejora() {
+		return itSinMejora;
 	}
 }

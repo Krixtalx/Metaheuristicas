@@ -3,8 +3,10 @@ package p1;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 
 /**
  * Implementa los distintos algoritmos para la resolucion del problema detallado
@@ -34,7 +36,7 @@ public class Solver {
 																	// no tiene entrada en la matriz
 		candidatos.remove(seleccionados.get(0));
 		float sumaMejor, sumaTemp, distanciaTotal = 0;
-		float[][] matriz = data.getMatrix();
+		float[][] matrizCoste = data.getMatrix();
 		int mejor;
 		while (seleccionados.size() < data.getSelection()) {
 			mejor = -1;
@@ -42,7 +44,7 @@ public class Solver {
 			for (int i = 0; i < candidatos.size(); i++) { // Bucle de candidatos
 				sumaTemp = 0;
 				for (int j = 0; j < seleccionados.size(); j++) { // Bucle de seleccionados
-					sumaTemp += valorMatriz(matriz, candidatos.get(i), seleccionados.get(j));
+					sumaTemp += valorMatriz(matrizCoste, candidatos.get(i), seleccionados.get(j));
 				}
 				if (sumaMejor < sumaTemp) { // Almacena el mejor candidato
 					sumaMejor = sumaTemp;
@@ -82,11 +84,11 @@ public class Solver {
 		}
 		
 		System.out.println("Random inicio: " + seleccionados.toString());
-		float[][] matriz = data.getMatrix();
+		float[][] matrizCoste = data.getMatrix();
 		int it = 0, siguiente = 0, elemCambio;
 		boolean vecinoEncontrado = false;
 		
-		ordenCambio = distancias(seleccionados, matriz);
+		ordenCambio = distancias(seleccionados, matrizCoste);
 		
 		FileWriter wrt = new FileWriter("logPruebas.txt");
 		//Itera un numero determinado de veces, o hasta recorrer todo el vecindario
@@ -99,8 +101,8 @@ public class Solver {
 				
 				wrt.write("Prueba: " + elemCambio + " vs " + candidatos.get(i));
 					
-				if(difIntercambio(seleccionados, matriz, elemCambio, candidatos.get(i)) <= 0) {
-					//Elimina el candidato de la lista, lo añade en la posición correspondiente, y devuelve
+				if(difIntercambio(seleccionados, matrizCoste, elemCambio, candidatos.get(i)) <= 0) {
+					//Elimina el candidato de la lista, lo aï¿½ade en la posiciï¿½n correspondiente, y devuelve
 						//el elemento previo a los candidatos
 					candidatos.add(seleccionados.set(seleccionados.indexOf(elemCambio), candidatos.remove(i)));
 					vecinoEncontrado = true;
@@ -112,21 +114,146 @@ public class Solver {
 			}
 			if(vecinoEncontrado) { //Si se ha encontrado un vecino mejor, reinicia la busqueda
 				siguiente = 0;
-				ordenCambio = distancias(seleccionados, matriz);
+				ordenCambio = distancias(seleccionados, matrizCoste);
 				vecinoEncontrado = false;
 			}else { //Si no, vuelve a intentarlo con el siguiente elemento de la solucion
 				siguiente++;
 			}
 		}
 		wrt.close();
-		System.out.println("Distancia M: " + calcularDistancia(seleccionados, matriz) + " en " + it + " evaluaciones");
+		System.out.println("Distancia M: " + calcularDistancia(seleccionados, matrizCoste) + " en " + it + " evaluaciones");
 		return seleccionados;
+	}
+	
+	public static ArrayList<Integer> busquedaTabu(Data data, Param param){
+		//Inicializamos los parametros que usaremos en la funcion
+		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
+		LinkedList<Integer> candidatos = new LinkedList<>(); // Candidatos
+		ArrayList<Integer> mejorSolucion = new ArrayList<>(); // Mejor Solucion hasta ahora
+		ArrayList<Pair<Integer, Integer>> vecindario = new ArrayList<>();
+		
+		double valorMejorSolucion = 0;
+ 		float[][] matrizCostes = data.getMatrix();
+ 		
+ 		CircularList<Integer> listaTabu = new CircularList<>(param.getTenenciaTabu());
+ 		int[] memoria = new int[data.getSize()];
+		
+		for (int i = 0; i < data.getSize(); i++) {
+			candidatos.add(i);
+			memoria[i] = 0;
+		}
+		for(int i = 0; i < data.getSelection(); i++) {
+			int elegido = candidatos.remove(param.generateInt(candidatos.size()-1));
+			seleccionados.add(elegido); //Seleccionamos aleatoriamente entre los candidatos
+			mejorSolucion.add(elegido);
+		}
+		int it = 0;
+		
+		valorMejorSolucion = calcularDistancia(mejorSolucion, matrizCostes);
+		
+		SortedPairArray<Float, Integer> ordenCambio;
+		ordenCambio = distancias(seleccionados, matrizCostes);
+		int elemCambio, siguiente = 0;
+		
+		
+		while(it < param.getIteraciones()) {
+			int iteracionesSinMejora=0;
+			
+			while(iteracionesSinMejora < param.getIteraciones() && it < param.getIteraciones()) {
+				//Generar vecindario
+				elemCambio = ordenCambio.get(siguiente).getValue();
+				double mejorCostoVecino = Integer.MIN_VALUE;
+				int mejorVecino=-1;
+				//TODO: limitar % vecindario. GL
+				for (int i = 0; i < param.getTamVecindario(); i++) {
+					int candidatoCambio = candidatos.get(param.generateInt(candidatos.size()));
+					if(!listaTabu.contains(candidatoCambio)) { //Si no esta restringido, entra al vecindario
+						//Comprueba si es el mejor
+						float diff = difIntercambio(seleccionados, matrizCostes, elemCambio, candidatoCambio);
+						if(mejorCostoVecino < diff) {
+							mejorCostoVecino = diff;
+							mejorVecino = candidatoCambio;
+						}
+					}else {
+						i--;
+					}
+				}
+				//Intercambiamos el nuevo elemento con el antiguo
+				candidatos.add(seleccionados.remove(seleccionados.indexOf(elemCambio)));
+				seleccionados.add(candidatos.remove(candidatos.indexOf(mejorVecino)));
+				//Actualiza la memoria a largo plazo
+				for (int i = 0; i < seleccionados.size(); i++) {
+					memoria[seleccionados.get(i)]++;
+				}
+				
+				//Actualiza lista tabu
+				listaTabu.push(elemCambio);
+				//Incrementamos el numero de iteracciones
+				it++;
+				
+				if(mejorCostoVecino<=0) //Si no mejora nuestra solucion, aumentamos el numero de iteraciones sin mejora.
+					iteracionesSinMejora++;
+				else { //Si es mejor, comprueba si es mejor que la mejor solucion global y la guarda
+					iteracionesSinMejora = 0;
+					double aux = calcularDistancia(seleccionados, matrizCostes);
+					if(valorMejorSolucion < aux) {
+						valorMejorSolucion = aux;
+						mejorSolucion = new ArrayList<>(seleccionados);
+					}
+				}
+				
+				ordenCambio = distancias(seleccionados, matrizCostes);
+				
+			}
+			//Reiniciar
+			if(param.generateBool()) {//Intensificar
+				seleccionados = masElegidos(memoria, data.getSelection());
+			}else {//Diversificar
+				seleccionados = menosElegidos(memoria, data.getSelection());
+			}
+			
+			
+		}
+		System.out.println("coste: " + calcularDistancia(mejorSolucion, matrizCostes));
+		return mejorSolucion;
 	}
 	
 
 	//-----------------------------------------------------------------------------
 	//								METODOS PRIVADOS
 	//-----------------------------------------------------------------------------
+	//TODO: comentar
+	private static ArrayList<Integer> menosElegidos(int[] memoria, int nElem) {
+		ArrayList<Integer> sol = new ArrayList<>();
+		while(sol.size() < nElem) {
+			int peor = -1;
+			int peorValor = Integer.MAX_VALUE;
+			for (int i = 0; i < memoria.length; i++) {
+				if(memoria[i] < peorValor && !sol.contains(i)) {
+					peorValor = memoria[i];
+					peor = i;
+				}
+			}
+			sol.add(peor);
+		}
+		return sol;
+	}
+	
+	private static ArrayList<Integer> masElegidos(int[] memoria, int nElem) {
+		ArrayList<Integer> sol = new ArrayList<>();
+		while(sol.size() < nElem) {
+			int mejor= -1;
+			int mejorValor = Integer.MIN_VALUE;
+			for (int i = 0; i < memoria.length; i++) {
+				if(memoria[i] > mejorValor && !sol.contains(i)) {
+					mejorValor = memoria[i];
+					mejor = i;
+				}
+			}
+			sol.add(mejor);
+		}
+		return sol;
+	}
 	
 	/**
 	 * Calcula la diferencia del aporte entre un elemento seleccionado y otro no seleccionado
