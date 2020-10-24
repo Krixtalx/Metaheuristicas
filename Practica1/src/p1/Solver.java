@@ -3,6 +3,7 @@ package p1;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -125,12 +126,11 @@ public class Solver {
 		return seleccionados;
 	}
 	
-	public static ArrayList<Integer> busquedaTabu(Data data, Param param){
+	public static ArrayList<Integer> busquedaTabu(Data data, Param param) throws IOException{
 		//Inicializamos los parametros que usaremos en la funcion
 		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
 		LinkedList<Integer> candidatos = new LinkedList<>(); // Candidatos
 		ArrayList<Integer> mejorSolucion = new ArrayList<>(); // Mejor Solucion hasta ahora
-		ArrayList<Pair<Integer, Integer>> vecindario = new ArrayList<>();
 		
 		double valorMejorSolucion = 0;
  		float[][] matrizCostes = data.getMatrix();
@@ -154,8 +154,9 @@ public class Solver {
 		SortedPairArray<Float, Integer> ordenCambio;
 		ordenCambio = distancias(seleccionados, matrizCostes);
 		int elemCambio, siguiente = 0;
-		
-		
+
+		FileWriter wrt = new FileWriter("logPruebas.txt");
+		ArrayList<Integer> randUsedList = new ArrayList<>();
 		while(it < param.getIteraciones()) {
 			int iteracionesSinMejora=0;
 			
@@ -164,9 +165,12 @@ public class Solver {
 				elemCambio = ordenCambio.get(siguiente).getValue();
 				double mejorCostoVecino = Integer.MIN_VALUE;
 				int mejorVecino=-1;
+				String temp = "i-> ";
 				//TODO: limitar % vecindario. GL
 				for (int i = 0; i < param.getTamVecindario(); i++) {
-					int candidatoCambio = candidatos.get(param.generateInt(candidatos.size()));
+					//Genera un vecino aleatoriamente
+					int randPosition = param.generateInt(candidatos.size());
+					int candidatoCambio = candidatos.get(randPosition);
 					if(!listaTabu.contains(candidatoCambio)) { //Si no esta restringido, entra al vecindario
 						//Comprueba si es el mejor
 						float diff = difIntercambio(seleccionados, matrizCostes, elemCambio, candidatoCambio);
@@ -177,10 +181,14 @@ public class Solver {
 					}else {
 						i--;
 					}
+					//Quitamos de los candidatos el recien probado
+					randUsedList.add(candidatos.remove(randPosition));
+					temp += i + ", ";
 				}
+				wrt.write(temp+"\n");
 				//Intercambiamos el nuevo elemento con el antiguo
 				candidatos.add(seleccionados.remove(seleccionados.indexOf(elemCambio)));
-				seleccionados.add(candidatos.remove(candidatos.indexOf(mejorVecino)));
+				seleccionados.add(randUsedList.remove(randUsedList.indexOf(mejorVecino)));
 				//Actualiza la memoria a largo plazo
 				for (int i = 0; i < seleccionados.size(); i++) {
 					memoria[seleccionados.get(i)]++;
@@ -202,19 +210,29 @@ public class Solver {
 					}
 				}
 				
+				//Recalcula las distancias de la solucion actual
 				ordenCambio = distancias(seleccionados, matrizCostes);
+				//Reestablece los candidatos
+				candidatos.addAll(randUsedList);
+				randUsedList.clear();
 				
 			}
 			//Reiniciar
 			if(param.generateBool()) {//Intensificar
 				seleccionados = masElegidos(memoria, data.getSelection());
+				System.out.println("INTENSIFICANDO MEMORIA=" + Arrays.toString(memoria));
+				System.out.println("INTENSIFICADO="+seleccionados);
 			}else {//Diversificar
 				seleccionados = menosElegidos(memoria, data.getSelection());
+				System.out.println("DIVERSIFICANDO MEMORIA=" + Arrays.toString(memoria));
+				System.out.println("DIVERSIFICADO="+seleccionados);
 			}
-			
+			System.out.println("IT="+it);
 			
 		}
-		System.out.println("coste: " + calcularDistancia(mejorSolucion, matrizCostes));
+		System.out.println("actualcoste:" + calcularDistancia(seleccionados, matrizCostes));
+		System.out.println("mejorcoste: " + calcularDistancia(mejorSolucion, matrizCostes));
+		wrt.close();
 		return mejorSolucion;
 	}
 	
@@ -222,7 +240,13 @@ public class Solver {
 	//-----------------------------------------------------------------------------
 	//								METODOS PRIVADOS
 	//-----------------------------------------------------------------------------
-	//TODO: comentar
+
+	/**
+	 * Calcula la solucion con los valores que menos veces han aparecido en una solucion
+	 * @param memoria Memoria de cada elemento del problema
+	 * @param nElem Numero de elementos que forman una solucion
+	 * @return Lista de enteros correspondiente a los elementos de menos repeticiones
+	 */
 	private static ArrayList<Integer> menosElegidos(int[] memoria, int nElem) {
 		ArrayList<Integer> sol = new ArrayList<>();
 		while(sol.size() < nElem) {
@@ -239,6 +263,12 @@ public class Solver {
 		return sol;
 	}
 	
+	/**
+	 * Calcula la solucion con los valores que mas veces han aparecido en una solucion
+	 * @param memoria Memoria de cada elemento del problema
+	 * @param nElem Numero de elementos que forman una solucion
+	 * @return Lista de enteros correspondiente a los elementos de mas repeticiones
+	 */
 	private static ArrayList<Integer> masElegidos(int[] memoria, int nElem) {
 		ArrayList<Integer> sol = new ArrayList<>();
 		while(sol.size() < nElem) {

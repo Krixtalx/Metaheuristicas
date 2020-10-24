@@ -39,7 +39,7 @@ public class Param {
 			dataFile = separeStrings[1];
 			break;
 			
-		case "iteracciones":
+		case "iteraciones":
 			iteraciones = Integer.parseInt(separeStrings[1]);
 			if(iteraciones == -1) 
 				iteraciones = Integer.MAX_VALUE;
