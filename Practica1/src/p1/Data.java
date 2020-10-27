@@ -7,17 +7,17 @@ package p1;
  *           archivos de datos.
  */
 public class Data {
-	private float[][] valueMatrix;
+	private double[][] valueMatrix;
 	private int size;
 	private int selection;
 
 	public Data(int _size, int _selection) {
 		size = _size;
 		selection = _selection;
-		valueMatrix = new float[_size][_size];
+		valueMatrix = new double[_size][_size];
 	}
 
-	public void addValue(int f, int c, float v) {
+	public void addValue(int f, int c, double v) {
 		valueMatrix[f][c] = v;
 	}
 
@@ -29,7 +29,7 @@ public class Data {
 		return selection;
 	}
 
-	public float[][] getMatrix() {
+	public double[][] getMatrix() {
 		return valueMatrix;
 	}
 

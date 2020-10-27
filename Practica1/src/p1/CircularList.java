@@ -41,4 +41,23 @@ public class CircularList<T> {
 	public boolean contains(T dato) {
 		return listaAux.contains(dato);
 	}
+	
+	public void clear() {
+		listaAux.clear();
+		contador = 0;
+		for(int i = 0; i < maximo; i++) {
+			listaAux.add(null);
+		}
+	}
+	
+	@Override
+	public String toString() {
+		String aux = "[";
+		for (int i = 0; i < listaAux.size(); i++) {
+			aux+=listaAux.get(i);
+			aux+=", ";
+		}
+		aux+="]";
+		return aux;
+	}
 }
