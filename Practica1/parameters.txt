@@ -1,8 +1,8 @@
 [Param]
-algoritmo=Busqueda Tabu
+algoritmo=Busqueda Local
 seed=77620720
 dataFile=GKD-c_1_n500_m50
 iteraciones=50000
 tenenciaTabu=5
 tamVecindario=10
-itSinMejora=5
+itSinMejora=100

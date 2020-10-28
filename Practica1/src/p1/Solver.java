@@ -213,21 +213,16 @@ public class Solver {
 				
 				//Incrementamos el numero de iteracciones
 				it++;
-				
-				if(mejorCostoVecino<=0) //Si no mejora la solucion actual, aumentamos el numero de iteraciones sin mejora.
-					iteracionesSinMejora++;
-				else { //Si es mejor, reinicia el contador de iteracionesSinMejora y comprueba si es mejor que la mejor solucion global y la guarda
-					iteracionesSinMejora = 0;
-					
-					if(valorMejorSolucion < costeSeleccion) {
-						valorMejorSolucion = costeSeleccion;
-						mejorSolucion = new ArrayList<>(seleccionados);
-						//Borramos la memoria a largo plazo y a corto plazo
-						for (int i = 0; i < memoria.length; i++) {
-							memoria[i]=0;
-						}
-						listaTabu.clear();
+				iteracionesSinMejora++;
+				if(valorMejorSolucion < costeSeleccion) {
+					valorMejorSolucion = costeSeleccion;
+					mejorSolucion = new ArrayList<>(seleccionados);
+					//Borramos la memoria a largo plazo y a corto plazo
+					for (int i = 0; i < memoria.length; i++) {
+						memoria[i]=0;
 					}
+					listaTabu.clear();
+					iteracionesSinMejora = 0;
 				}
 				
 				//Reestablece los candidatos
@@ -236,7 +231,8 @@ public class Solver {
 
 			}
 			//Reiniciar
-			if(param.generateDouble()<probIntensificar) {//Intensificar
+			candidatos.addAll(seleccionados);
+			if(param.generateDouble()<(2*it/param.getIteraciones())/*probIntensificar*/) {//Intensificar
 				seleccionados = masElegidos(memoria, data.getSelection());
 				log.write("Reiniciando busqueda tabu intensificando");
 				log.write("Nueva seleccion: " + seleccionados);
@@ -245,10 +241,10 @@ public class Solver {
 				log.write("Reiniciando busqueda tabu diversificando");
 				log.write("Nueva seleccion: " + seleccionados);
 			}
+			candidatos.removeAll(seleccionados);
 			if(probIntensificar<0.95)
 				probIntensificar*=1.03;
 			
-			System.out.println("Prob: "+probIntensificar);
 
 			//Borramos la memoria a largo plazo y a corto plazo
 			for (int i = 0; i < memoria.length; i++) {
