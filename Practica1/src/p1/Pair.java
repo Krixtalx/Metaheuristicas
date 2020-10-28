@@ -27,4 +27,9 @@ public class Pair<T extends Comparable<T>, U> implements Comparable<Pair<T, U>>{
 	public int compareTo(Pair<T, U> pair) {
 		return key.compareTo(pair.key);
 	}
+	
+	@Override
+	public String toString() {
+		return "<"+key.toString()+", "+value.toString()+">";
+	}
 }

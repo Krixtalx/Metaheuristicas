@@ -1,10 +1,8 @@
 package p1;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,7 +25,7 @@ public class Solver {
 	 * 
 	 * @return ArrayList con los elementos solucion
 	 */
-	public static ArrayList<Integer> Greedy(Data data, Param param) {
+	public static ArrayList<Integer> Greedy(Data data, Param param, Logger log) throws IOException{
 		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
 		LinkedList<Integer> candidatos = new LinkedList<>(); // Candidatos
 		for (int i = 0; i < data.getSize(); i++) {
@@ -35,7 +33,9 @@ public class Solver {
 		}
 		seleccionados.add(param.generateInt(data.getSize() - 1)); // Restamos 1 ya que el ultimo
 																	// no tiene entrada en la matriz
+		log.write("Seleccion inicial: " + seleccionados.get(0));
 		candidatos.remove(seleccionados.get(0));
+		
 		double sumaMejor, sumaTemp, distanciaTotal = 0;
 		double[][] matrizCoste = data.getMatrix();
 		int mejor;
@@ -57,8 +57,12 @@ public class Solver {
 			}
 			distanciaTotal += sumaMejor;
 			seleccionados.add(candidatos.remove(mejor));
+			log.nextIteration();
+			log.write("Nueva seleccion: " + seleccionados.get(seleccionados.size()-1) + "con un aporte de " + sumaMejor);
+			log.write("Distancia M actual: " + distanciaTotal);
 		}
-		System.out.println("Distancia M: " + distanciaTotal);
+		log.write("Solucion: " + seleccionados);
+		log.write("Distancia M: " + distanciaTotal);
 		return seleccionados;
 	}
 	
@@ -69,7 +73,7 @@ public class Solver {
 	 * @return ArrayList con los elementos solucion
 	 * @throws IOException 
 	 */
-	public static ArrayList<Integer> busquedaLocal(Data data, Param param) throws IOException {
+	public static ArrayList<Integer> busquedaLocal(Data data, Param param, Logger log) throws IOException {
 		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
 		LinkedList<Integer> candidatos = new LinkedList<>(); // Candidatos
 		ArrayList<Integer> vecino = new ArrayList<>();
@@ -90,8 +94,10 @@ public class Solver {
 		boolean vecinoEncontrado = false;
 		
 		ordenCambio = distancias(seleccionados, matrizCoste);
+		log.write("Solucion inicial: " + seleccionados 
+				+ "\nCoste: " + calcularDistancia(seleccionados, matrizCoste));
+		log.nextIteration();
 		
-		FileWriter wrt = new FileWriter("logPruebas.txt");
 		//Itera un numero determinado de veces, o hasta recorrer todo el vecindario
 		while(it < param.getIteraciones() && siguiente < ordenCambio.size()) {
 			elemCambio = ordenCambio.get(siguiente).getValue();
@@ -100,17 +106,17 @@ public class Solver {
 				//Si el vecino es mejor, lo intercambia
 				it++;
 				
-				wrt.write("Prueba: " + elemCambio + " vs " + candidatos.get(i));
-					
-				if(difIntercambio(seleccionados, matrizCoste, elemCambio, candidatos.get(i)) > 0) {
+				double diferencia = difIntercambio(seleccionados, matrizCoste, elemCambio, candidatos.get(i));
+				if(diferencia > 0) {
 					//Elimina el candidato de la lista, lo aï¿½ade en la posiciï¿½n correspondiente, y devuelve
 						//el elemento previo a los candidatos
 					candidatos.add(seleccionados.set(seleccionados.indexOf(elemCambio), candidatos.remove(i)));
 					vecinoEncontrado = true;
 					i = candidatos.size();
-					wrt.write(" mejora\n");
-				}else {
-					wrt.write(" sigue\n");
+					log.write("Solucion actual: " + seleccionados 
+								+ "\nCoste: " + calcularDistancia(seleccionados, matrizCoste)
+								+ "\nDiferencia de costes: " + diferencia);
+					log.nextIteration();
 				}
 			}
 			if(vecinoEncontrado) { //Si se ha encontrado un vecino mejor, reinicia la busqueda
@@ -121,12 +127,11 @@ public class Solver {
 				siguiente++;
 			}
 		}
-		wrt.close();
 		System.out.println("Distancia M: " + calcularDistancia(seleccionados, matrizCoste) + " en " + it + " evaluaciones");
 		return seleccionados;
 	}
 	
-	public static ArrayList<Integer> busquedaTabu(Data data, Param param) throws IOException{
+	public static ArrayList<Integer> busquedaTabu(Data data, Param param, Logger log) throws IOException{
 		//Inicializamos los parametros que usaremos en la funcion
 		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
 		LinkedList<Integer> candidatos = new LinkedList<>(); // Candidatos
@@ -154,7 +159,9 @@ public class Solver {
 		SortedPairArray<Double, Integer> ordenCambio;
 		int elemCambio, siguiente = 0;
 
-		FileWriter wrt = new FileWriter("logPruebas.txt");
+		log.write("Solucion inicial: " + seleccionados
+				+ "\nCoste: " + valorMejorSolucion);
+		log.nextIteration();
 		ArrayList<Integer> randUsedList = new ArrayList<>();
 		while(it < param.getIteraciones()) {
 			int iteracionesSinMejora=0;
@@ -186,10 +193,15 @@ public class Solver {
 					randUsedList.add(candidatos.remove(randPosition));
 					temp += i + ", ";
 				}
-				wrt.write(temp+"\n");
 				//Intercambiamos el nuevo elemento con el antiguo
 				candidatos.add(seleccionados.remove(seleccionados.indexOf(elemCambio)));
 				seleccionados.add(randUsedList.remove(randUsedList.indexOf(mejorVecino)));
+				double costeSeleccion = calcularDistancia(seleccionados, matrizCostes);
+				log.write("Solucion actual: " + seleccionados
+								+ "\nCoste: " + costeSeleccion
+								+ "\nLista tabu: " + listaTabu
+								+ "\nMemoria a largo plazo: " + Arrays.toString(memoria));
+				log.nextIteration();
 				//Actualiza la memoria a largo plazo
 				for (int i = 0; i < seleccionados.size(); i++) {
 					memoria[seleccionados.get(i)]++;
@@ -201,13 +213,13 @@ public class Solver {
 				//Incrementamos el numero de iteracciones
 				it++;
 				
-				if(mejorCostoVecino<=0) //Si no mejora nuestra solucion, aumentamos el numero de iteraciones sin mejora.
+				if(mejorCostoVecino<=0) //Si no mejora la solucion actual, aumentamos el numero de iteraciones sin mejora.
 					iteracionesSinMejora++;
-				else { //Si es mejor, comprueba si es mejor que la mejor solucion global y la guarda
+				else { //Si es mejor, reinicia el contador de iteracionesSinMejora y comprueba si es mejor que la mejor solucion global y la guarda
 					iteracionesSinMejora = 0;
-					double aux = calcularDistancia(seleccionados, matrizCostes);
-					if(valorMejorSolucion < aux) {
-						valorMejorSolucion = aux;
+					
+					if(valorMejorSolucion < costeSeleccion) {
+						valorMejorSolucion = costeSeleccion;
 						mejorSolucion = new ArrayList<>(seleccionados);
 						//Borramos la memoria a largo plazo y a corto plazo
 						for (int i = 0; i < memoria.length; i++) {
@@ -225,12 +237,12 @@ public class Solver {
 			//Reiniciar
 			if(param.generateBool()) {//Intensificar
 				seleccionados = masElegidos(memoria, data.getSelection());
-				System.out.println("INTENSIFICANDO MEMORIA=" + Arrays.toString(memoria));
-				System.out.println("INTENSIFICADO="+seleccionados);
+				log.write("Reiniciando busqueda tabú intensificando");
+				log.write("Nueva seleccion: " + seleccionados);
 			}else {//Diversificar
 				seleccionados = menosElegidos(memoria, data.getSelection());
-				System.out.println("DIVERSIFICANDO MEMORIA=" + Arrays.toString(memoria));
-				System.out.println("DIVERSIFICADO="+seleccionados);
+				log.write("Reiniciando busqueda tabú diversificando");
+				log.write("Nueva seleccion: " + seleccionados);
 			}
 
 			//Borramos la memoria a largo plazo y a corto plazo
@@ -240,9 +252,9 @@ public class Solver {
 			listaTabu.clear();
 			
 		}
-		System.out.println("actualcoste:" + calcularDistancia(seleccionados, matrizCostes));
-		System.out.println("mejorcoste: " + calcularDistancia(mejorSolucion, matrizCostes));
-		wrt.close();
+		log.nextIteration();
+		log.write("Mejor solucion obtenida: " + mejorSolucion);
+		log.write("Coste: " + valorMejorSolucion);
 		return mejorSolucion;
 	}
 	

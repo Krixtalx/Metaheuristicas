@@ -55,7 +55,8 @@ public class CircularList<T> {
 		String aux = "[";
 		for (int i = 0; i < listaAux.size(); i++) {
 			aux+=listaAux.get(i);
-			aux+=", ";
+			if(i<listaAux.size()-1)
+				aux+=", ";
 		}
 		aux+="]";
 		return aux;
