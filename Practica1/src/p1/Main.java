@@ -12,7 +12,9 @@ public class Main {
 			Reader dataReader = new Reader(parametros.getDataFile(), "", Constants.DEFAULT_EXT);
 			Data problemData = dataReader.readData();
 			Logger log = new Logger(parametros);
-
+			
+			log.startTimer();
+			
 			switch (parametros.getAlgoritmo()) {
 			case "Greedy":
 				ArrayList<Integer> solucion = Solver.Greedy(problemData, parametros, log);
@@ -29,7 +31,8 @@ public class Main {
 				System.out.println("Solucion: " + solucion3);
 				break;
 			}
-			
+			log.endTimer();
+			log.write("Tiempo empleado: " + log.getDuration().toMillis() + " milliseconds");
 			log.close();
 			System.out.println("Ejecucion acabada");
 			

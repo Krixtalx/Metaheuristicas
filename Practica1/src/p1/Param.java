@@ -78,6 +78,10 @@ public class Param {
 	public boolean generateBool() {
 		return randGenerator.nextBoolean();
 	}
+	
+	public double generateDouble() {
+		return randGenerator.nextDouble();
+	}
 
 	public String getDataFile() {
 		return dataFile;

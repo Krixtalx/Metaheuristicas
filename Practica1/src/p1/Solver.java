@@ -58,7 +58,7 @@ public class Solver {
 			distanciaTotal += sumaMejor;
 			seleccionados.add(candidatos.remove(mejor));
 			log.nextIteration();
-			log.write("Nueva seleccion: " + seleccionados.get(seleccionados.size()-1) + "con un aporte de " + sumaMejor);
+			log.write("Nueva seleccion: " + seleccionados.get(seleccionados.size()-1) + " con un aporte de " + sumaMejor);
 			log.write("Distancia M actual: " + distanciaTotal);
 		}
 		log.write("Solucion: " + seleccionados);
@@ -127,7 +127,9 @@ public class Solver {
 				siguiente++;
 			}
 		}
-		System.out.println("Distancia M: " + calcularDistancia(seleccionados, matrizCoste) + " en " + it + " evaluaciones");
+		log.write("Solucion final: " + seleccionados);
+		log.write("Distancia M: " + calcularDistancia(seleccionados, matrizCoste));
+		log.write("Numero iteraciones: " + it);
 		return seleccionados;
 	}
 	
@@ -139,6 +141,7 @@ public class Solver {
 
 		double valorMejorSolucion = 0;
 		double[][] matrizCostes = data.getMatrix();
+		double probIntensificar = 0.2;
  		
  		CircularList<Integer> listaTabu = new CircularList<>(param.getTenenciaTabu());
  		int[] memoria = new int[data.getSize()];
@@ -173,7 +176,6 @@ public class Solver {
 				elemCambio = ordenCambio.get(siguiente).getValue();
 				double mejorCostoVecino = Integer.MIN_VALUE;
 				int mejorVecino=-1;
-				String temp = "i-> ";
 				//TODO: limitar % vecindario. GL
 				for (int i = 0; i < param.getTamVecindario(); i++) {
 					//Genera un vecino aleatoriamente
@@ -191,7 +193,6 @@ public class Solver {
 					}
 					//Quitamos de los candidatos el recien probado
 					randUsedList.add(candidatos.remove(randPosition));
-					temp += i + ", ";
 				}
 				//Intercambiamos el nuevo elemento con el antiguo
 				candidatos.add(seleccionados.remove(seleccionados.indexOf(elemCambio)));
@@ -235,15 +236,19 @@ public class Solver {
 
 			}
 			//Reiniciar
-			if(param.generateBool()) {//Intensificar
+			if(param.generateDouble()<probIntensificar) {//Intensificar
 				seleccionados = masElegidos(memoria, data.getSelection());
-				log.write("Reiniciando busqueda tabú intensificando");
+				log.write("Reiniciando busqueda tabu intensificando");
 				log.write("Nueva seleccion: " + seleccionados);
 			}else {//Diversificar
 				seleccionados = menosElegidos(memoria, data.getSelection());
-				log.write("Reiniciando busqueda tabú diversificando");
+				log.write("Reiniciando busqueda tabu diversificando");
 				log.write("Nueva seleccion: " + seleccionados);
 			}
+			if(probIntensificar<0.95)
+				probIntensificar*=1.03;
+			
+			System.out.println("Prob: "+probIntensificar);
 
 			//Borramos la memoria a largo plazo y a corto plazo
 			for (int i = 0; i < memoria.length; i++) {
@@ -255,6 +260,7 @@ public class Solver {
 		log.nextIteration();
 		log.write("Mejor solucion obtenida: " + mejorSolucion);
 		log.write("Coste: " + valorMejorSolucion);
+		log.write("Numero iteraciones: " + it);
 		return mejorSolucion;
 	}
 	
