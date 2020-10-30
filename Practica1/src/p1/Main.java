@@ -13,6 +13,8 @@ public class Main {
 			Data problemData = dataReader.readData();
 			Logger log = new Logger(parametros);
 			
+			System.out.println("Ha comenzado la ejecucion");
+			
 			log.startTimer();
 			
 			switch (parametros.getAlgoritmo()) {

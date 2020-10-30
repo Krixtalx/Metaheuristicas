@@ -15,7 +15,10 @@ public class Param {
 	private int iteraciones;
 	private int tenenciaTabu;
 	private int itSinMejora;
-	private int tamVecindario;
+	private int tamInicialVecindario;
+	private int tamMinimoVecindario;
+	private double decrementoIt;
+	private double tamActual;
 
 	public void parseParam(String linea) throws IllegalArgumentException {
 		String[] separeStrings = linea.split(Constants.PARAM_SEPARATOR);
@@ -38,25 +41,34 @@ public class Param {
 		case "dataFile":
 			dataFile = separeStrings[1];
 			break;
-			
+
 		case "iteraciones":
 			iteraciones = Integer.parseInt(separeStrings[1]);
-			if(iteraciones == -1) 
+			if (iteraciones == -1)
 				iteraciones = Integer.MAX_VALUE;
 			break;
-			
+
 		case "tenenciaTabu":
 			tenenciaTabu = Integer.parseInt(separeStrings[1]);
 			break;
-			
-		case "tamVecindario":
-			tamVecindario = Integer.parseInt(separeStrings[1]);
+
+		case "tamInicialVecindario":
+			tamInicialVecindario = Integer.parseInt(separeStrings[1]);
+			tamActual = tamInicialVecindario;
 			break;
-			
+
+		case "tamMinimoVecindario":
+			tamMinimoVecindario = Integer.parseInt(separeStrings[1]);
+			break;
+
 		case "itSinMejora":
 			itSinMejora = Integer.parseInt(separeStrings[1]);
 			break;
 			
+		case "decrementoIt":
+			decrementoIt = Double.parseDouble(separeStrings[1]);
+			break;
+
 		default:
 			throw new IllegalArgumentException(separeStrings[0] + " no es un parametro válido");
 
@@ -74,11 +86,11 @@ public class Param {
 	public int generateInt(int max) {
 		return randGenerator.nextInt(max);
 	}
-	
+
 	public boolean generateBool() {
 		return randGenerator.nextBoolean();
 	}
-	
+
 	public double generateDouble() {
 		return randGenerator.nextDouble();
 	}
@@ -86,20 +98,27 @@ public class Param {
 	public String getDataFile() {
 		return dataFile;
 	}
-	
+
 	public int getIteraciones() {
 		return iteraciones;
 	}
-	
+
 	public int getTenenciaTabu() {
 		return tenenciaTabu;
 	}
-	
-	public int getTamVecindario() {
-		return tamVecindario;
-	}
-	
+
 	public int getItSinMejora() {
 		return itSinMejora;
+	}
+
+	public int getTamVecindario(int it) {
+		double temp = it/iteraciones;
+		temp*=-temp;
+		temp+=1;
+		int tempTam = (int) (tamInicialVecindario*temp);
+		if(tempTam < tamMinimoVecindario) {
+			return tamMinimoVecindario;
+		}
+		return tempTam;
 	}
 }

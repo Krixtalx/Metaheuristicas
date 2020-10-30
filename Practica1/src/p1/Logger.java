@@ -12,9 +12,10 @@ public class Logger {
 	BufferedWriter escritor;
 	Instant inicio;
 	Instant fin;
-	
+	boolean on = true;
+
 	public Logger(Param parametros) {
-		fileName = "log-" + parametros.getDataFile() + "-" + parametros.getAlgoritmo()+".txt";
+		fileName = "log-" + parametros.getDataFile() + "-" + parametros.getAlgoritmo() + ".txt";
 		File fichero = new File(fileName);
 		FileWriter out = null;
 		try {
@@ -24,26 +25,30 @@ public class Logger {
 		}
 		escritor = new BufferedWriter(out);
 	}
-	
+
 	public void write(String text) throws IOException {
-		escritor.write(text);
-		escritor.write('\n');
+		if (on) {
+			escritor.write(text);
+			escritor.write('\n');
+		}
 	}
-	
+
 	public void nextIteration() throws IOException {
-		escritor.write('\n');
-		escritor.write("==============================================");
-		escritor.write('\n');
+		if (on) {
+			escritor.write('\n');
+			escritor.write("==============================================");
+			escritor.write('\n');
+		}
 	}
-	
+
 	public void close() throws IOException {
 		escritor.close();
 	}
-	
+
 	public void startTimer() {
 		inicio = Instant.now();
 	}
-	
+
 	public void endTimer() {
 		fin = Instant.now();
 	}
