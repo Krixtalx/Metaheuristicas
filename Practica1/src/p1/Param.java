@@ -17,8 +17,8 @@ public class Param {
 	private int itSinMejora;
 	private int tamInicialVecindario;
 	private int tamMinimoVecindario;
-	private double decrementoIt;
-	private double tamActual;
+	private double probIntensificar;
+	private double penalizacionMemoria;
 
 	public void parseParam(String linea) throws IllegalArgumentException {
 		String[] separeStrings = linea.split(Constants.PARAM_SEPARATOR);
@@ -54,9 +54,8 @@ public class Param {
 
 		case "tamInicialVecindario":
 			tamInicialVecindario = Integer.parseInt(separeStrings[1]);
-			tamActual = tamInicialVecindario;
 			break;
-
+			
 		case "tamMinimoVecindario":
 			tamMinimoVecindario = Integer.parseInt(separeStrings[1]);
 			break;
@@ -64,9 +63,13 @@ public class Param {
 		case "itSinMejora":
 			itSinMejora = Integer.parseInt(separeStrings[1]);
 			break;
-			
-		case "decrementoIt":
-			decrementoIt = Double.parseDouble(separeStrings[1]);
+
+		case "probIntensificar":
+			probIntensificar = Double.parseDouble(separeStrings[1]);
+			break;
+
+		case "penalizacionMemoria":
+			penalizacionMemoria = Double.parseDouble(separeStrings[1]);
 			break;
 
 		default:
@@ -120,5 +123,13 @@ public class Param {
 			return tamMinimoVecindario;
 		}
 		return tempTam;
+	}
+	
+	public double getProbIntens() {
+		return probIntensificar;
+	}
+	
+	public double getPenalizacionMemoria() {
+		return penalizacionMemoria;
 	}
 }

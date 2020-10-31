@@ -22,6 +22,11 @@ public class Reader {
 		}
 	}
 
+	/**
+	 * Lee todos los parametros del fichero
+	 * @return Objeto Param con cada parametro
+	 * @throws IOException
+	 */
 	public Param readParam() throws IOException {
 		FileReader r = new FileReader(paramFile);
 		BufferedReader reader = new BufferedReader(r);

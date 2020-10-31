@@ -107,9 +107,8 @@ public class Solver {
 
 				double diferencia = difIntercambio(seleccionados, matrizCoste, elemCambio, candidatos.get(i));
 				if (diferencia > 0) {
-					// Elimina el candidato de la lista, lo aï¿½ade en la posiciï¿½n correspondiente, y
-					// devuelve
-					// el elemento previo a los candidatos
+					// Elimina el candidato de la lista, lo añade en la posicion correspondiente, y
+					// devuelve el elemento previo a los candidatos
 					candidatos.add(seleccionados.set(seleccionados.indexOf(elemCambio), candidatos.remove(i)));
 					vecinoEncontrado = true;
 					i = candidatos.size();
@@ -132,6 +131,14 @@ public class Solver {
 		return seleccionados;
 	}
 
+	/**
+	 * Obtiene una solución al problema mediante un algoritmo de busqueda tabu
+	 * @param data Datos del problema
+	 * @param param Parametros para la ejecucion
+	 * @param log Logger para la escritura en fichero de la ejecucion
+	 * @return Lista con los elementos de la solucion obtenida
+	 * @throws IOException
+	 */
 	public static ArrayList<Integer> busquedaTabu(Data data, Param param, Logger log) throws IOException {
 		// Inicializamos los parametros que usaremos en la funcion
 		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
@@ -140,7 +147,6 @@ public class Solver {
 
 		double valorMejorSolucion = 0;
 		double[][] matrizCostes = data.getMatrix();
-		double probIntensificar = 0.2;
 
 		CircularList<Integer> listaTabu = new CircularList<>(param.getTenenciaTabu());
 		int[] memoria = new int[data.getSize()];
@@ -168,20 +174,15 @@ public class Solver {
 			int iteracionesSinMejora = 0;
 
 			while (iteracionesSinMejora < param.getItSinMejora() && it < param.getIteraciones()) {
-				ordenCambio = ordenarSeleccion(seleccionados, matrizCostes); // Calculamos los elementos que menos
-																				// aportan a
-				// la solucion
+				ordenCambio = ordenarSeleccion(seleccionados, matrizCostes); 	// Calculamos los elementos que menos
+																				// aportan a la solucion
 				// Generar vecindario
-
 				double mejoraVecino = Integer.MIN_VALUE;
 				int mejorVecino = -1, mejorElemCambio = -1;
 				int vecinosGenerados = 0;
-				// TODO: limitar % vecindario. GL
 				for (int i = 0; i < ordenCambio.size() && vecinosGenerados < param.getTamVecindario(it); i++) {
 					elemCambio = ordenCambio.get(i).getValue();
-					for (int j = 0; j < candidatos.size() + randUsedList.size()
-							&& vecinosGenerados < param.getTamVecindario(it); j++) {
-
+					while (candidatos.size() > 0 && vecinosGenerados < param.getTamVecindario(it)) {
 						vecinosGenerados++;
 						// Genera un vecino aleatoriamente
 						int randPosition = param.generateInt(candidatos.size());
@@ -196,7 +197,6 @@ public class Solver {
 							}
 						} else {
 							vecinosGenerados--;
-							j--;
 						}
 						// Quitamos de los candidatos el recien probado
 						randUsedList.add(candidatos.remove(randPosition));
@@ -207,9 +207,9 @@ public class Solver {
 					randUsedList.clear();
 				}
 				// Intercambiamos el nuevo elemento con el antiguo
-
 				candidatos.add(seleccionados.remove(seleccionados.indexOf(mejorElemCambio)));
 				seleccionados.add(candidatos.remove(candidatos.indexOf(mejorVecino)));
+				
 				double costeSeleccion = calcularDistancia(seleccionados, matrizCostes);
 				log.write("Solucion actual: " + seleccionados + "\nCoste: " + costeSeleccion + "\nLista tabu: "
 						+ listaTabu + "\nMemoria a largo plazo: " + Arrays.toString(memoria));
@@ -225,12 +225,14 @@ public class Solver {
 				// Incrementamos el numero de iteracciones
 				it++;
 				iteracionesSinMejora++;
+				
+				//Si la solucion actual es mejor, la guarda
 				if (valorMejorSolucion < costeSeleccion) {
 					valorMejorSolucion = costeSeleccion;
 					mejorSolucion = new ArrayList<>(seleccionados);
 					// Borramos la memoria a largo plazo y a corto plazo
 					for (int i = 0; i < memoria.length; i++) {
-						memoria[i] = 0;
+						memoria[i] *= param.getPenalizacionMemoria();
 					}
 					listaTabu.clear();
 					iteracionesSinMejora = 0;
@@ -239,7 +241,7 @@ public class Solver {
 			}
 			// Reiniciar
 			candidatos.addAll(seleccionados);
-			if (param.generateDouble() < (2 * it / param.getIteraciones())/* probIntensificar */) {// Intensificar
+			if (param.generateDouble() < (param.getProbIntens() * it / param.getIteraciones())) {// Intensificar
 				seleccionados = masElegidos(memoria, data.getSelection());
 				log.write("Reiniciando busqueda tabu intensificando");
 				log.write("Nueva seleccion: " + seleccionados);
@@ -249,12 +251,10 @@ public class Solver {
 				log.write("Nueva seleccion: " + seleccionados);
 			}
 			candidatos.removeAll(seleccionados);
-			if (probIntensificar < 0.95)
-				probIntensificar *= 1.03;
 
 			// Borramos la memoria a largo plazo y a corto plazo
 			for (int i = 0; i < memoria.length; i++) {
-				memoria[i] = 0;
+				memoria[i] *= param.getPenalizacionMemoria();
 			}
 			listaTabu.clear();
 
@@ -263,9 +263,6 @@ public class Solver {
 		log.write("Mejor solucion obtenida: " + mejorSolucion);
 		log.write("Coste: " + valorMejorSolucion);
 		log.write("Numero iteraciones: " + it);
-		System.out.println("Mejor solucion obtenida: " + mejorSolucion);
-		System.out.println("Coste: " + valorMejorSolucion);
-		System.out.println("Numero iteraciones: " + it);
 		return mejorSolucion;
 	}
 

@@ -17,6 +17,12 @@ public class Data {
 		valueMatrix = new double[_size][_size];
 	}
 
+	/**
+	 * Añade un valor a la matriz de valores
+	 * @param f Fila
+	 * @param c Columna
+	 * @param v Valor
+	 */
 	public void addValue(int f, int c, double v) {
 		valueMatrix[f][c] = v;
 	}

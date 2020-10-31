@@ -6,5 +6,6 @@ iteraciones=50000
 tenenciaTabu=5
 tamInicialVecindario=100
 tamMinimoVecindario=10
-decrementoIt=0.05
 itSinMejora=100
+probIntensificar=1.25
+penalizacionMemoria=0.5

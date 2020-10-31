@@ -36,10 +36,11 @@ public class Main {
 			log.endTimer();
 			log.write("Tiempo empleado: " + log.getDuration().toMillis() + " milliseconds");
 			log.close();
-			System.out.println("Ejecucion acabada");
+			System.out.println("Ejecucion acabada correctamente");
 			
 		} catch (IOException e) {
 			System.out.println("No se puede leer el fichero	: " + e.getMessage());
+			System.out.println("Ejecucion acabada");
 		}
 	}
 }

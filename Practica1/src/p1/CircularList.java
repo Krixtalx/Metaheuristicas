@@ -6,7 +6,7 @@ import java.util.LinkedList;
  * Lista circular
  * @author jcfer
  *
- * @param <T> Dato que almacena la lista
+ * @param <T> Tipo de dato que almacena la lista
  */
 public class CircularList<T> {
 	private LinkedList<T> listaAux;
@@ -37,6 +37,7 @@ public class CircularList<T> {
 	public T get(int c) {
 		return listaAux.get(c);
 	}
+	
 	
 	public boolean contains(T dato) {
 		return listaAux.contains(dato);

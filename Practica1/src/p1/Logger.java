@@ -7,11 +7,19 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 
+/**
+ * Clase para la generación de ficheros de historial de ejecución
+ * @author Jose Antonio
+ *
+ */
 public class Logger {
 	String fileName;
 	BufferedWriter escritor;
 	Instant inicio;
 	Instant fin;
+	/**
+	 * Activa o desactiva la estritura
+	 */
 	boolean on = true;
 
 	public Logger(Param parametros) {
