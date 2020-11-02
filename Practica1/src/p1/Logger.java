@@ -8,7 +8,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 /**
- * Clase para la generación de ficheros de historial de ejecución
+ * Clase para la generaciï¿½n de ficheros de historial de ejecuciï¿½n
  * @author Jose Antonio
  *
  */
@@ -18,12 +18,12 @@ public class Logger {
 	Instant inicio;
 	Instant fin;
 	/**
-	 * Activa o desactiva la estritura
+	 * Activa o desactiva la escritura
 	 */
 	boolean on = true;
 
 	public Logger(Param parametros) {
-		fileName = "log-" + parametros.getDataFile() + "-" + parametros.getAlgoritmo() + ".txt";
+		fileName = "log-"+ parametros.getSeed() +"-" + parametros.getDataFile() + "-" + parametros.getAlgoritmo() + ".txt";
 		File fichero = new File(fileName);
 		FileWriter out = null;
 		try {
@@ -44,7 +44,7 @@ public class Logger {
 	public void nextIteration() throws IOException {
 		if (on) {
 			escritor.write('\n');
-			escritor.write("==============================================");
+			escritor.write("========================================================");
 			escritor.write('\n');
 		}
 	}
