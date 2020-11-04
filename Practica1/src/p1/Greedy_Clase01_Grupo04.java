@@ -30,10 +30,7 @@ public class Greedy_Clase01_Grupo04 {
 			mejor = -1;
 			sumaMejor = -1;
 			for (int i = 0; i < candidatos.size(); i++) { // Bucle de candidatos
-				sumaTemp = 0;
-				for (int j = 0; j < seleccionados.size(); j++) { // Bucle de seleccionados
-					sumaTemp += Auxiliares.valorMatriz(matrizCoste, candidatos.get(i), seleccionados.get(j));
-				}
+				sumaTemp = Auxiliares.calcularDistanciaElemento(candidatos.get(i), seleccionados, matrizCoste);
 				if (sumaMejor < sumaTemp) { // Almacena el mejor candidato
 					sumaMejor = sumaTemp;
 					mejor = i;

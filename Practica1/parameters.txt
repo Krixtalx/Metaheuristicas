@@ -1,7 +1,7 @@
 [Param]
-algoritmo=Busqueda Tabu
-seed=77688092
-dataFile=GKD-c_1_n500_m50
+algoritmo=Greedy
+seed=77690720
+dataFile=SOM-b_13_n400_m40
 iteraciones=50000
 tenenciaTabu=5
 tamInicialVecindario=100
