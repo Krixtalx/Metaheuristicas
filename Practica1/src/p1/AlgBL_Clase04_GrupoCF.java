@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class BusquedaLocal_Clase03_Grupo04 {
+public class AlgBL_Clase04_GrupoCF {
 
 	/**
 	 * Obtiene una solucion al problema mediante un algoritmo de busqueda local,

@@ -19,17 +19,17 @@ public class Main {
 			
 			switch (parametros.getAlgoritmo()) {
 			case "Greedy":
-				ArrayList<Integer> solucion = Greedy_Clase01_Grupo04.ejecutar(problemData, parametros, log);
+				ArrayList<Integer> solucion = AlgGR_Clase04_GrupoCF.ejecutar(problemData, parametros, log);
 				System.out.println("Solucion: " + solucion);
 				break;
 				
 			case "Busqueda Local":
-				ArrayList<Integer> solucion2 = BusquedaLocal_Clase03_Grupo04.ejecutar(problemData, parametros, log);
+				ArrayList<Integer> solucion2 = AlgBL_Clase04_GrupoCF.ejecutar(problemData, parametros, log);
 				System.out.println("Solucion: " + solucion2);
 				break;
 				
 			case "Busqueda Tabu":
-				ArrayList<Integer> solucion3 = BusquedaTabu_Clase05_Grupo04.ejecutar(problemData, parametros, log);
+				ArrayList<Integer> solucion3 = AlgBT_Clase04_GrupoCF.ejecutar(problemData, parametros, log);
 				System.out.println("Solucion: " + solucion3);
 				break;
 			}

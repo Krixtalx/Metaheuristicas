@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public class BusquedaTabu_Clase05_Grupo04 {
+public class AlgBT_Clase04_GrupoCF {
 	/**
 	 * Obtiene una soluci�n al problema mediante un algoritmo de busqueda tabu
 	 * @param data Datos del problema
