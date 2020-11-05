@@ -114,6 +114,10 @@ public class Param {
 		return itSinMejora;
 	}
 
+	public void setTamIniVecindario(int nElem, int nSeleccion) {
+		tamInicialVecindario = nSeleccion*(nElem-nSeleccion);
+	}
+	
 	public int getTamVecindario(int it) {
 		double temp = it/iteraciones;
 		temp*=-temp;

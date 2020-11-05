@@ -15,6 +15,10 @@ public class BusquedaTabu_Clase05_Grupo04 {
 	 * @throws IOException
 	 */
 	public static ArrayList<Integer> ejecutar(Data data, Param param, Logger log) throws IOException {
+		if(param.getTamVecindario(0) == -1) {
+			param.setTamIniVecindario(data.getSize(), data.getSelection());
+		}
+		
 		// Inicializamos los parametros que usaremos en la funcion
 		ArrayList<Integer> seleccionados = new ArrayList<>(); // Seleccionados
 		LinkedList<Integer> candidatos = new LinkedList<>(); // Candidatos
