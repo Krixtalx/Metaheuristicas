@@ -1,0 +1,11 @@
+[Param]
+algoritmo=Greedy
+seed=77690720
+dataFile=SOM-b_13_n400_m40
+iteraciones=50000
+tenenciaTabu=5
+tamInicialVecindario=100
+tamMinimoVecindario=10
+itSinMejora=100
+probIntensificar=1.25
+penalizacionMemoria=0.5
