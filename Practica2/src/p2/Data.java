@@ -7,9 +7,9 @@ package p2;
  *           archivos de datos.
  */
 public class Data {
-	private double[][] valueMatrix;
-	private int size;
-	private int selection;
+	public static double[][] valueMatrix;
+	public static int size;
+	public static int selection;
 
 	public Data(int _size, int _selection) {
 		size = _size;

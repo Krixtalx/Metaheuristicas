@@ -23,6 +23,14 @@ public class Pair<T extends Comparable<T>, U> implements Comparable<Pair<T, U>>{
 		return value;
 	}
 	
+	public void setKey(T newKey) {
+		key = newKey;
+	}
+	
+	public void setValue(U newVal) {
+		value = newVal;
+	}
+	
 	@Override
 	public int compareTo(Pair<T, U> pair) {
 		return key.compareTo(pair.key);
@@ -30,6 +38,6 @@ public class Pair<T extends Comparable<T>, U> implements Comparable<Pair<T, U>>{
 	
 	@Override
 	public String toString() {
-		return "<"+key.toString()+", "+value.toString()+">";
+		return "<"+key.toString()+",	"+value.toString()+">\n";
 	}
 }

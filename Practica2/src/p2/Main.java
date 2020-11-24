@@ -1,7 +1,6 @@
 package p2;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class Main {
 	public static void main(String[] args) {
@@ -9,7 +8,7 @@ public class Main {
 		Reader params = new Reader(Constants.PARAM_NAME, "", Constants.DEFAULT_EXT);
 		try {
 			Param parametros = params.readParam();
-			Reader dataReader = new Reader(parametros.getDataFile(), "", Constants.DEFAULT_EXT);
+			Reader dataReader = new Reader(parametros.dataFile, "", Constants.DEFAULT_EXT);
 			Data problemData = dataReader.readData();
 			Logger log = new Logger(parametros);
 			
@@ -17,9 +16,7 @@ public class Main {
 			
 			log.startTimer();
 			
-			switch (parametros.getAlgoritmo()) {
-				
-			}
+			AlgGN_Clase04_GrupoCF.ejecutar(problemData, parametros, log);
 			log.endTimer();
 			log.write("Tiempo empleado: " + log.getDuration().toMillis() + " milliseconds");
 			log.close();
