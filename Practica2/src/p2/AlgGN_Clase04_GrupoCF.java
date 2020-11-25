@@ -31,19 +31,21 @@ public class AlgGN_Clase04_GrupoCF {
 		int ev = 0;
 		while (ev < param.evaluaciones) {
 			ev += param.tamPoblacion;
-			// SELECCION
+
+			// Seleccion
 			seleccion = torneoBinario(poblacion, param);
 			ArrayList<Pair<Double, ArrayList<Integer>>> aux = new ArrayList<>();
 			for (int i = 0; i < seleccion.size(); i++) {
 				aux.add(new Pair<Double, ArrayList<Integer>>(-1.0,
 						new ArrayList<Integer>(poblacion.get(seleccion.get(i)).getValue())));
 			}
-//			System.out.println(aux);
-//			if(ev==param.tamPoblacion*7)
-//				System.out.println(aux);
-			// CRUCE
-			// TODO: if para elegir cruce
-			cruceDosPuntos(aux, param, candidatos);
+
+			// Cruce
+			if (param.cruce.equals("DosPuntos"))
+				cruceDosPuntos(aux, param, candidatos);
+			else if (param.cruce.equals("MPX"))
+				cruceMPX(aux, param, candidatos);
+
 			// Mutacion
 			mutacion(aux, param);
 
@@ -67,7 +69,7 @@ public class AlgGN_Clase04_GrupoCF {
 			random2 = param.generateInt(poblacion.size());
 			while (random1 == random2)
 				random1 = param.generateInt(poblacion.size());
-			
+
 			if (poblacion.get(random1).getKey() < poblacion.get(random2).getKey())
 				resultado.add(random2);
 			else
@@ -109,9 +111,7 @@ public class AlgGN_Clase04_GrupoCF {
 				repararDosPuntos(elegidos.get(i), candidatos);
 				repararDosPuntos(elegidos.get(i + 1), candidatos);
 			}
-
 		}
-
 	}
 
 	private static void repararDosPuntos(Pair<Double, ArrayList<Integer>> individuo, ArrayList<Integer> candidatos) {
@@ -135,7 +135,7 @@ public class AlgGN_Clase04_GrupoCF {
 					}
 				}
 				// Introduce el mejor candidato
-				
+
 				elementos.add(candidatos.remove(mejor));
 			}
 
@@ -146,6 +146,85 @@ public class AlgGN_Clase04_GrupoCF {
 			candidatos.addAll(elementos);
 			Collections.sort(candidatos);
 		}
+	}
+
+	private static void cruceMPX(ArrayList<Pair<Double, ArrayList<Integer>>> elegidos, Param param,
+			ArrayList<Integer> candidatos) {
+
+		ArrayList<Integer> hijo1 = new ArrayList<>();
+		ArrayList<Integer> hijo2 = new ArrayList<>();
+		// Para cada par de padres
+		for (int j = 0; j < elegidos.size(); j += 2) {
+			// Obtiene aleatoriamente los alelos a cruzar
+			int nElegir = (int) (Data.selection * (0.2 + param.generateDouble() * 0.6));
+
+			// CRUZE ENTRE PADRE j y j+1
+
+			// Guarda los alelos del primer padre
+			for (int i = 0; i < nElegir; i++) {
+				int rnd = param.generateInt(Data.selection);
+				while (hijo1.contains(elegidos.get(j).getValue().get(rnd))) {
+					rnd = param.generateInt(Data.selection);
+				}
+				hijo1.add(elegidos.get(j).getValue().get(rnd));
+			}
+
+			// Guarda los alelos del segundo padre
+			for (int i = 0; i < Data.selection; i++) {
+				if (!hijo1.contains(elegidos.get(j + 1).getValue().get(i))) {
+					hijo1.add(elegidos.get(j + 1).getValue().get(i));
+				}
+			}
+
+			// CRUZE ENTRE PADRE j+1 y j
+
+			// Guarda los alelos del segundo padre
+			for (int i = 0; i < nElegir; i++) {
+				int rnd = param.generateInt(Data.selection);
+				while (hijo2.contains(elegidos.get(j + 1).getValue().get(rnd))) {
+					rnd = param.generateInt(Data.selection);
+				}
+				hijo2.add(elegidos.get(j + 1).getValue().get(rnd));
+			}
+
+			// Guarda los alelos del primer padre
+			for (int i = 0; i < Data.selection; i++) {
+				if (!hijo2.contains(elegidos.get(j).getValue().get(i))) {
+					hijo2.add(elegidos.get(j).getValue().get(i));
+				}
+			}
+
+			//Reparar errores
+			repararMPX(hijo1, candidatos);
+			repararMPX(hijo2, candidatos);
+
+			//Guardar hijos
+			elegidos.get(j).setValue(new ArrayList<>(hijo1));
+			elegidos.get(j + 1).setValue(new ArrayList<>(hijo2));
+
+			hijo1.clear();
+			hijo2.clear();
+		}
+	}
+
+	private static void repararMPX(ArrayList<Integer> individuo, ArrayList<Integer> candidatos) {
+		if (individuo.size() < Data.selection) {
+			repararDosPuntos(new Pair<Double, ArrayList<Integer>>(0.0, individuo), candidatos);
+		} else {
+			while (individuo.size() > Data.selection) {
+				int peor = -1;
+				double peorAporte = Double.MAX_VALUE, ap;
+				for (int i = 0; i < individuo.size(); i++) {
+					ap = Auxiliares.calcularDistanciaElemento(individuo.get(i), individuo, Data.valueMatrix);
+					if (peorAporte > ap) {
+						peorAporte = ap;
+						peor = i;
+					}
+				}
+				individuo.remove(peor);
+			}
+		}
+
 	}
 
 	private static void mutacion(ArrayList<Pair<Double, ArrayList<Integer>>> elegidos, Param param) {
@@ -167,20 +246,21 @@ public class AlgGN_Clase04_GrupoCF {
 		}
 	}
 
-	private static ArrayList<Pair<Double, ArrayList<Integer>>> reemplazo(ArrayList<Pair<Double, ArrayList<Integer>>> padres,
-			ArrayList<Pair<Double, ArrayList<Integer>>> hijos, Param param) {
-		
+	private static ArrayList<Pair<Double, ArrayList<Integer>>> reemplazo(
+			ArrayList<Pair<Double, ArrayList<Integer>>> padres, ArrayList<Pair<Double, ArrayList<Integer>>> hijos,
+			Param param) {
+
 		ArrayList<Pair<Double, ArrayList<Integer>>> resultado = new ArrayList<>();
 		Collections.sort(padres);
 		Collections.sort(hijos);
-		
+
 		for (int i = 1; i <= param.elite; i++) {
-			resultado.add(padres.get(padres.size()-i));
+			resultado.add(padres.get(padres.size() - i));
 		}
 		for (int i = 1; i <= hijos.size() - param.elite; i++) {
-			resultado.add(hijos.get(hijos.size()-i));
+			resultado.add(hijos.get(hijos.size() - i));
 		}
-		
+
 		return resultado;
 	}
 }

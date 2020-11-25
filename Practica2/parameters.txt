@@ -4,6 +4,6 @@ dataFile=GKD-c_1_n500_m50
 evaluaciones=50000
 tamPoblacion=50
 elite=3
-cruce=DosPuntos
+cruce=MPX
 probCruce=0.7
 probMutacion=0.05
