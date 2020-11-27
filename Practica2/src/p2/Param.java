@@ -20,7 +20,6 @@ public class Param {
 
 	public void parseParam(String linea) throws IllegalArgumentException {
 		String[] separeStrings = linea.split(Constants.PARAM_SEPARATOR);
-//		System.out.println("LEYENDO: " + separeStrings[0]);
 		switch (separeStrings[0]) {
 
 		case "seed":

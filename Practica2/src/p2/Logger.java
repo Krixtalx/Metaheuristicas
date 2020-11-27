@@ -20,7 +20,7 @@ public class Logger {
 	/**
 	 * Activa o desactiva la escritura
 	 */
-	boolean on = false;
+	boolean on = true;
 
 	public Logger(Param parametros) {
 		fileName = "log-"+ parametros.seed +"-" + parametros.dataFile + ".txt";

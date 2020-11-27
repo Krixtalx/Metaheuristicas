@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-public class AlgGN_Clase04_GrupoCF {
+public class AlgGN_Clase04_Grupo2 {
 
 	public static ArrayList<Integer> ejecutar(Data data, Param param, Logger log) throws IOException {
 		ArrayList<Pair<Double, ArrayList<Integer>>> poblacion = new ArrayList<>();
@@ -30,8 +30,12 @@ public class AlgGN_Clase04_GrupoCF {
 
 		int ev = 0;
 		while (ev < param.evaluaciones) {
-			ev += param.tamPoblacion;
-
+			
+			log.write("Num ev: "+ev);
+			log.write("Solución inicial: ");
+			log.write(poblacion.toString());
+			log.nextIteration();
+			
 			// Seleccion
 			seleccion = torneoBinario(poblacion, param);
 			ArrayList<Pair<Double, ArrayList<Integer>>> aux = new ArrayList<>();
@@ -39,22 +43,43 @@ public class AlgGN_Clase04_GrupoCF {
 				aux.add(new Pair<Double, ArrayList<Integer>>(-1.0,
 						new ArrayList<Integer>(poblacion.get(seleccion.get(i)).getValue())));
 			}
+			
+			log.write("Num ev: "+ev);
+			log.write("Solución tras torneo Binario: ");
+			log.write(poblacion.toString());
+			log.nextIteration();
 
 			// Cruce
 			if (param.cruce.equals("DosPuntos"))
 				cruceDosPuntos(aux, param, candidatos);
 			else if (param.cruce.equals("MPX"))
 				cruceMPX(aux, param, candidatos);
+			
+			log.write("Num ev: "+ev);
+			log.write("Solución tras cruce: ");
+			log.write(aux.toString());
+			log.nextIteration();
 
 			// Mutacion
 			mutacion(aux, param);
+			
+			log.write("Num ev: "+ev);
+			log.write("Solución tras mutacion: ");
+			log.write(aux.toString());
+			log.nextIteration();
 
 			// Evaluar
 			evaluacion(aux);
+			
+			log.write("Num ev: "+ev);
+			log.write("Solución tras evaluacion: ");
+			log.write(aux.toString());
+			log.nextIteration();
 
 			// Reemplazo
 			poblacion = reemplazo(poblacion, aux, param);
-
+			
+			ev += param.tamPoblacion;
 		}
 		System.out.println(poblacion);
 		return null;
@@ -158,7 +183,7 @@ public class AlgGN_Clase04_GrupoCF {
 			// Obtiene aleatoriamente los alelos a cruzar
 			int nElegir = (int) (Data.selection * (0.2 + param.generateDouble() * 0.6));
 
-			// CRUZE ENTRE PADRE j y j+1
+			// CRUCE ENTRE PADRE j y j+1
 
 			// Guarda los alelos del primer padre
 			for (int i = 0; i < nElegir; i++) {
@@ -176,7 +201,7 @@ public class AlgGN_Clase04_GrupoCF {
 				}
 			}
 
-			// CRUZE ENTRE PADRE j+1 y j
+			// CRUCE ENTRE PADRE j+1 y j
 
 			// Guarda los alelos del segundo padre
 			for (int i = 0; i < nElegir; i++) {

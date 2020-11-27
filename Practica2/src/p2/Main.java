@@ -16,7 +16,7 @@ public class Main {
 			
 			log.startTimer();
 			
-			AlgGN_Clase04_GrupoCF.ejecutar(problemData, parametros, log);
+			AlgGN_Clase04_Grupo2.ejecutar(problemData, parametros, log);
 			log.endTimer();
 			log.write("Tiempo empleado: " + log.getDuration().toMillis() + " milliseconds");
 			log.close();
