@@ -23,7 +23,7 @@ public class Logger {
 	boolean on = true;
 
 	public Logger(Param parametros) {
-		fileName = "log-"+ parametros.seed + "-" + parametros.cruce + "-" + parametros.dataFile + ".txt";
+		fileName = "log-"+ parametros.seed + "-" + parametros.cruce + "-" + parametros.dataFile+"-Elite"+parametros.elite + ".txt";
 		File fichero = new File(fileName);
 		FileWriter out = null;
 		try {

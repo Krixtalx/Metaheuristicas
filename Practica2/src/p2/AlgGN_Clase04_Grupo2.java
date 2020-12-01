@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 public class AlgGN_Clase04_Grupo2 {
 
 	/**
-	 * Obtiene solución al problema mediante un algoritmo genético. Muestra la población final por salida estándar
+	 * Obtiene soluciï¿½n al problema mediante un algoritmo genï¿½tico. Muestra la poblaciï¿½n final por salida estï¿½ndar
 	 * @param data Datos del problema
-	 * @param param Parámetros de la ejecución
+	 * @param param Parï¿½metros de la ejecuciï¿½n
 	 * @param log Objeto Logger para los archivos de registro
-	 * @return Mejor individuo de la población final
+	 * @return Mejor individuo de la poblaciï¿½n final
 	 * @throws IOException
 	 */
 	public static Pair<Double, ArrayList<Integer>> ejecutar(Data data, Param param, Logger log) throws IOException {
@@ -89,17 +89,17 @@ public class AlgGN_Clase04_Grupo2 {
 			
 			ev += param.tamPoblacion;
 		}
-		System.out.println(poblacion);
+		//System.out.println(poblacion);
 		Collections.sort(poblacion);
 		System.out.println("Mejor: " + poblacion.get(poblacion.size()-1));
 		return poblacion.get(poblacion.size()-1);
 	}
 
 	/**
-	 * Torneo Binario para la selección de pares de individuos
-	 * @param poblacion Población actual de la que seleccionar
-	 * @param param Parámetros de la ejecución
-	 * @return Lista con los índices de cada individuo seleccionado
+	 * Torneo Binario para la selecciï¿½n de pares de individuos
+	 * @param poblacion Poblaciï¿½n actual de la que seleccionar
+	 * @param param Parï¿½metros de la ejecuciï¿½n
+	 * @return Lista con los ï¿½ndices de cada individuo seleccionado
 	 */
 	private static ArrayList<Integer> torneoBinario(ArrayList<Pair<Double, ArrayList<Integer>>> poblacion,
 			Param param) {
@@ -122,8 +122,8 @@ public class AlgGN_Clase04_Grupo2 {
 
 	/**
 	 * Operador de cruce en dos puntos. Intercambia los alelos de cada par de individuos en un rango aleatorio
-	 * @param elegidos Selección de individuos
-	 * @param param Parámetros de la ejecución
+	 * @param elegidos Selecciï¿½n de individuos
+	 * @param param Parï¿½metros de la ejecuciï¿½n
 	 * @param candidatos Lista de candidatos con todos los elementos del problema
 	 */
 	private static void cruceDosPuntos(ArrayList<Pair<Double, ArrayList<Integer>>> elegidos, Param param,
@@ -178,6 +178,8 @@ public class AlgGN_Clase04_Grupo2 {
 			double mejorAporte = Double.MIN_VALUE, ap;
 			// Mientras no este lleno
 			while (elementos.size() < individuo.getValue().size()) {
+				mejorAporte = Double.MIN_VALUE;
+				mejor = -1;
 				// Comprueba el candidato de mayor aporte
 				for (int i = 0; i < candidatos.size(); i++) {
 					ap = Auxiliares.calcularDistanciaElemento(candidatos.get(i), elementos, Data.valueMatrix);
@@ -187,7 +189,6 @@ public class AlgGN_Clase04_Grupo2 {
 					}
 				}
 				// Introduce el mejor candidato
-
 				elementos.add(candidatos.remove(mejor));
 			}
 
@@ -202,8 +203,8 @@ public class AlgGN_Clase04_Grupo2 {
 	
 	/**
 	 * Operador de cruce MPX
-	 * @param elegidos Selección de individuos
-	 * @param param Parámetros de la ejecución
+	 * @param elegidos Selecciï¿½n de individuos
+	 * @param param Parï¿½metros de la ejecuciï¿½n
 	 * @param candidatos Lista de candidatos con todos los elementos del problema
 	 */
 	private static void cruceMPX(ArrayList<Pair<Double, ArrayList<Integer>>> elegidos, Param param,
@@ -274,7 +275,7 @@ public class AlgGN_Clase04_Grupo2 {
 		//Si tiene menos alelos, mismo caso que la reparacion en dos puntos
 		if (individuo.size() < Data.selection) {
 			repararDosPuntos(new Pair<Double, ArrayList<Integer>>(0.0, individuo), candidatos);
-		} else { //Si tiene más alelos, se quitan los de menos aporte
+		} else { //Si tiene mï¿½s alelos, se quitan los de menos aporte
 			while (individuo.size() > Data.selection) {
 				int peor = -1;
 				double peorAporte = Double.MAX_VALUE, ap;
@@ -292,9 +293,9 @@ public class AlgGN_Clase04_Grupo2 {
 	}
 
 	/**
-	 * Operador de mutación. Muta alelos de los hijos aleatoriamente
-	 * @param elegidos Colección de hijos
-	 * @param param Parámetros de la ejecución
+	 * Operador de mutaciï¿½n. Muta alelos de los hijos aleatoriamente
+	 * @param elegidos Colecciï¿½n de hijos
+	 * @param param Parï¿½metros de la ejecuciï¿½n
 	 */
 	private static void mutacion(ArrayList<Pair<Double, ArrayList<Integer>>> elegidos, Param param) {
 		for (Pair<Double, ArrayList<Integer>> individuo : elegidos) {
@@ -310,8 +311,8 @@ public class AlgGN_Clase04_Grupo2 {
 	}
 
 	/**
-	 * Calcula el coste de la selección
-	 * @param elegidos Colección de hijos
+	 * Calcula el coste de la selecciï¿½n
+	 * @param elegidos Colecciï¿½n de hijos
 	 */
 	private static void evaluacion(ArrayList<Pair<Double, ArrayList<Integer>>> elegidos) {
 		for (int i = 0; i < elegidos.size(); i++) {
@@ -320,11 +321,11 @@ public class AlgGN_Clase04_Grupo2 {
 	}
 
 	/**
-	 * Reemplaza la población con los hijos generados, manteniendo la élite anterior
-	 * @param padres Colección de padres
-	 * @param hijos Colección de hijos
-	 * @param param Parámetros de la ejecución
-	 * @return Nueva población de hijos
+	 * Reemplaza la poblaciï¿½n con los hijos generados, manteniendo la ï¿½lite anterior
+	 * @param padres Colecciï¿½n de padres
+	 * @param hijos Colecciï¿½n de hijos
+	 * @param param Parï¿½metros de la ejecuciï¿½n
+	 * @return Nueva poblaciï¿½n de hijos
 	 */
 	private static ArrayList<Pair<Double, ArrayList<Integer>>> reemplazo(
 			ArrayList<Pair<Double, ArrayList<Integer>>> padres, ArrayList<Pair<Double, ArrayList<Integer>>> hijos,
