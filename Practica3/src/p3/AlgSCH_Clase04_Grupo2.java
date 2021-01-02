@@ -1,9 +1,7 @@
 package p3;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 public class AlgSCH_Clase04_Grupo2 {
 
@@ -15,14 +13,17 @@ public class AlgSCH_Clase04_Grupo2 {
 		// Inicializamos la matriz heuristica
 		for (int i = 0; i < matrizHeuristica.length; i++) {
 			for (int j = 0; j < matrizHeuristica[0].length; j++) {
-				matrizHeuristica[i][j] = 1 / Data.valueMatrix[i][j];
+				matrizHeuristica[i][j] = Data.valueMatrix[i][j];
 				matrizFeromonas[i][j] = param.feromonaInicial;
 			}
 		}
 
 		ArrayList<ArrayList<Integer>> colonia = new ArrayList<>();
 		LinkedList<Integer> lrc;
-		Pair<Double, ArrayList<Integer>> mejorHormiga = new Pair<Double, ArrayList<Integer>>(Double.MIN_VALUE, null);
+		Pair<Double, ArrayList<Integer>> mejorHormigaLocal = new Pair<Double, ArrayList<Integer>>(Double.MIN_VALUE,
+				null);
+		Pair<Double, ArrayList<Integer>> mejorHormigaGlobal = new Pair<Double, ArrayList<Integer>>(Double.MIN_VALUE,
+				null);
 
 		while (it < param.iteraciones) {
 			System.out.println(it);
@@ -35,19 +36,20 @@ public class AlgSCH_Clase04_Grupo2 {
 				hormiga.add(candidatoAleatorio);
 				colonia.add(hormiga);
 			}
+			mejorHormigaLocal = new Pair<Double, ArrayList<Integer>>(Double.MIN_VALUE, null);
 
 			// Mientras no se tengan soluciones completas
 			for (int i = 1; i < Data.selection; i++) {
 				// Para cada hormiga
+				double prob = 0;
 				for (int j = 0; j < param.tamPoblacion; j++) {
 					// Obtener LRC
 					lrc = LRC(colonia.get(j), param);
 					double probDesp = param.generateDouble();
-					for (int k = 0; k < lrc.size(); k++){
-						
+					for (int k = 0; k < lrc.size(); k++) {
+
 						int candidato = lrc.get(k);
-						double prob = 0;
-						if (param.generateDouble() < param.qcero) { // P'k
+						if (param.qcero > param.generateDouble()) { // P'k -> Diapositiva 66
 							double suma = 0;
 							// Sumatorio divisor
 							for (int j2 = 0; j2 < lrc.size(); j2++) {
@@ -61,8 +63,9 @@ public class AlgSCH_Clase04_Grupo2 {
 							double eta = Auxiliares.calcularDistanciaElemento(candidato, colonia.get(j),
 									matrizHeuristica);
 
-							prob = (Math.pow(tau, param.alpha) * Math.pow(eta, param.beta)) / suma; // Formula
-																									// diapositiva 38
+							prob += (Math.pow(tau, param.alpha) * Math.pow(eta, param.beta)) / suma; // Formula
+																										// diapositiva
+																										// 38
 						} else { // arg max
 							double maximo = -Double.MAX_VALUE;
 							int mejor = -1;
@@ -82,61 +85,103 @@ public class AlgSCH_Clase04_Grupo2 {
 						}
 						if (probDesp <= prob) {
 							// Se desplaza
-//							for (Integer origen : colonia.get(j)) {
-//								//τrs(t) = (1 − ϕ) ⋅ τrs(t − 1) + ϕ ⋅ τ0
-//								matrizFeromonas[origen][candidato] = (1 - param.actLocal)
-//										* matrizFeromonas[origen][candidato] + param.actLocal * param.feromonaInicial;
-//							}
 							colonia.get(j).add(candidato);
 							double costeNueva = Auxiliares.calcularDistancia(colonia.get(j), Data.valueMatrix);
-							if(costeNueva > mejorHormiga.getKey()) {
-								mejorHormiga.setKey(costeNueva);
-								mejorHormiga.setValue(colonia.get(j));
+							if (costeNueva > mejorHormigaLocal.getKey()) {
+								mejorHormigaLocal.setKey(costeNueva);
+								mejorHormigaLocal.setValue(colonia.get(j));
 							}
-							break;
+
+							// Pasa a la siguiente hormiga
+							k = lrc.size();
 						}
 					}
+
+					// System.out.println("TAM HORMIGA: " + colonia.get(j).size());
 				}
-				//Actualización local
+				// Actualización local -> Diapositiva 68
+				// Por cada hormiga
 				for (int j = 0; j < param.tamPoblacion; j++) {
-					for (int j2 = 0; j2 < colonia.get(j).size()-1; j2++) {
-						//τrs(t) = (1 − ϕ) ⋅ τrs(t − 1) + ϕ ⋅ τ0
-						matrizFeromonas[colonia.get(j).get(j2)][colonia.get(j).get(colonia.get(j).size()-1)] = (1 - param.actLocal)
-								* matrizFeromonas[colonia.get(j).get(j2)][colonia.get(j).get(colonia.get(j).size()-1)] + param.actLocal * param.feromonaInicial;
+					// Por cada elemento
+					for (int j2 = 0; j2 < colonia.get(j).size() - 1; j2++) {
+						// τrs(t) = (1 − ϕ) ⋅ τrs(t − 1) + ϕ ⋅ τ0
+						matrizFeromonas[colonia.get(j).get(j2)][colonia.get(j)
+								.get(colonia.get(j).size() - 1)] = (1 - param.actLocal)
+										* matrizFeromonas[colonia.get(j).get(j2)][colonia.get(j)
+												.get(colonia.get(j).size() - 1)]
+										+ param.actLocal * param.feromonaInicial;
+						matrizFeromonas[colonia.get(j).get(colonia.get(j).size() - 1)][colonia.get(j)
+								.get(j2)] = matrizFeromonas[colonia.get(j).get(j2)][colonia.get(j)
+										.get(colonia.get(j).size() - 1)];
+						
 					}
+				}
+
+			}
+			/*
+			EL
+					        _.---**""**-.       
+					._   .-'           /|`.     
+					 \`.'             / |  `.   
+					  V              (  ;    \  
+					  L       _.-  -. `'      \ 
+					 / `-. _.'       \         ;
+					:            __   ;    _   |
+					:`-.___.+-*"': `  ;  .' `. |
+					|`-/     `--*'   /  /  /`.\|
+					: :              \    :`.| ;
+					| |   .           ;/ .' ' / 
+					: :  / `             :__.'  
+					 \`._.-'       /     |      
+					  : )         :      ;      
+					  :----.._    |     /       
+					 : .-.    `.       /        
+					  \     `._       /         
+					  /`-            /          
+					 :             .'           
+					  \ )       .-'             
+					   `-----*"'    
+					   
+			 */
+			
+			// En la mejor hormiga
+			for (int i = 0; i < mejorHormigaLocal.getValue().size(); i++) {
+				// Por cada elemento, actualiza su feromona
+				for (int j = 0; j < i; j++) {
+					matrizFeromonas[mejorHormigaLocal.getValue().get(j)][mejorHormigaLocal
+							.getValue().get(
+									i)] = (1 - param.actFeronoma)
+											* matrizFeromonas[mejorHormigaLocal.getValue().get(j)][mejorHormigaLocal
+													.getValue().get(i)]
+											+ param.actFeronoma * (mejorHormigaLocal.getKey());
+					matrizFeromonas[mejorHormigaLocal.getValue().get(i)][mejorHormigaLocal.getValue()
+							.get(j)] = matrizFeromonas[mejorHormigaLocal.getValue().get(j)][mejorHormigaLocal.getValue()
+									.get(i)];
 				}
 			}
 
-			//EL DEMOÑO
-//			for (int i = 0; i < matrizFeromonas.length; i++) {
-//				for (int k = 0; k < matrizFeromonas[i].length; k++) {
-//					matrizFeromonas[i][k] = (1-param.actFeronoma)*matrizFeromonas[i][k];
-//					if(mejorHormiga.getValue().contains(i) || mejorHormiga.getValue().contains(k))
-//						matrizFeromonas[i][k]+=param.actFeronoma*Auxiliares.calcularDistancia(mejorHormiga.getValue(), Data.valueMatrix);
-//				}
-//			}
-			
-			for (int i = 0; i < mejorHormiga.getValue().size(); i++) {
-				for (int j = 0; j < i; j++) {
-					matrizFeromonas[mejorHormiga.getValue().get(j)][mejorHormiga.getValue().get(i)] = (1 - param.actFeronoma)
-							* matrizFeromonas[mejorHormiga.getValue().get(j)][mejorHormiga.getValue().get(i)] + param.actFeronoma * (1/mejorHormiga.getKey());
-				}
+			// Actualiza mejor global
+			if (mejorHormigaLocal.getKey() > mejorHormigaGlobal.getKey()) {
+				mejorHormigaGlobal = mejorHormigaLocal;
 			}
+
 			it++;
-			System.out.print(mejorHormiga);
-			System.out.println("Tam: " + mejorHormiga.getValue().size());
+			System.out.print(mejorHormigaLocal);
+			System.out.println("Tam: " + mejorHormigaLocal.getValue().size());
+			System.out.print(mejorHormigaGlobal);
+			System.out.println("Tam: " + mejorHormigaGlobal.getValue().size());
 		}
 	}
 
 	private static LinkedList<Integer> LRC(ArrayList<Integer> seleccionados, Param param) {
 		LinkedList<Integer> lista = new LinkedList<>();
-		double dMin = distanciaMinima(seleccionados, Data.valueMatrix), dMax = distanciaMaxima(seleccionados, Data.valueMatrix);
+		double dMin = distanciaMinima(seleccionados, Data.valueMatrix),
+				dMax = distanciaMaxima(seleccionados, Data.valueMatrix);
 		for (int i = 0; i < Data.size; i++) {
-			double DISTANCIA = Auxiliares.calcularDistanciaElemento(i, seleccionados,
-					Data.valueMatrix);
+			double DISTANCIA = Auxiliares.calcularDistanciaElemento(i, seleccionados, Data.valueMatrix);
 			double OTRA = (dMin + param.paramLRC * (dMax - dMin));
-			if (!seleccionados.contains(i) && Auxiliares.calcularDistanciaElemento(i, seleccionados,
-					Data.valueMatrix) >= (dMin + param.paramLRC * (dMax - dMin))) {
+
+			if (!seleccionados.contains(i) && DISTANCIA >= OTRA) {
 				lista.add(i);
 			}
 		}
@@ -166,7 +211,10 @@ public class AlgSCH_Clase04_Grupo2 {
 	private static double sumFeromonas(ArrayList<Integer> r, int s, double[][] mFeromonas) {
 		double suma = 0;
 		for (Integer elem : r) {
-			suma += mFeromonas[elem][s];
+			if (elem < s)
+				suma += mFeromonas[elem][s];
+			else
+				suma += mFeromonas[s][elem];
 		}
 		return suma;
 	}

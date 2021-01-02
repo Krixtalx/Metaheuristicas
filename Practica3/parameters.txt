@@ -8,4 +8,4 @@ beta=1
 qcero=0.95
 actFeronoma=0.1
 actLocal=0.1
-paramLRC=0.6
+paramLRC=0.75
