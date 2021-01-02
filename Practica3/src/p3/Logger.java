@@ -20,10 +20,10 @@ public class Logger {
 	/**
 	 * Activa o desactiva la escritura
 	 */
-	boolean on = true;
+	boolean on = false;
 
 	public Logger(Param parametros) {
-		fileName = "log-"+ parametros.seed + "-" + parametros.cruce + "-" + parametros.dataFile+"-Elite"+parametros.elite + ".txt";
+		fileName = "log-"+ parametros.seed + "-" + "-" + parametros.dataFile+"-Elite" + ".txt";
 		File fichero = new File(fileName);
 		FileWriter out = null;
 		try {

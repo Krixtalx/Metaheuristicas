@@ -1,5 +1,6 @@
 package p3;
 
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -11,12 +12,15 @@ public class Param {
 	public String dataFile;
 	public int seed;
 	public Random randGenerator;
-	public int evaluaciones;
-	public int elite;
-	public String cruce;
+	public int iteraciones;
 	public int tamPoblacion;
-	public double probCruce;
-	public double probMutacion;
+	public int alpha;
+	public int beta;
+	public double qcero;
+	public double actFeronoma;
+	public double actLocal;
+	public double paramLRC;
+	public double feromonaInicial;
 
 	public void parseParam(String linea) throws IllegalArgumentException {
 		String[] separeStrings = linea.split(Constants.PARAM_SEPARATOR);
@@ -35,30 +39,38 @@ public class Param {
 			dataFile = separeStrings[1];
 			break;
 
-		case "evaluaciones":
-			evaluaciones = Integer.parseInt(separeStrings[1]);
-			if (evaluaciones == -1)
-				evaluaciones = Integer.MAX_VALUE;
-			break;
-
-		case "elite":
-			elite = Integer.parseInt(separeStrings[1]);
-			break;
-
-		case "cruce":
-			cruce = separeStrings[1];
+		case "iteraciones":
+			iteraciones = Integer.parseInt(separeStrings[1]);
+			if (iteraciones == -1)
+				iteraciones = Integer.MAX_VALUE;
 			break;
 			
 		case "tamPoblacion":
 			tamPoblacion = Integer.parseInt(separeStrings[1]);
 			break;
-
-		case "probCruce":
-			probCruce = Double.parseDouble(separeStrings[1]);
+			
+		case "alpha":
+			alpha = Integer.parseInt(separeStrings[1]);
 			break;
-
-		case "probMutacion":
-			probMutacion = Double.parseDouble(separeStrings[1]);
+			
+		case "beta":
+			beta = Integer.parseInt(separeStrings[1]);
+			break;
+			
+		case "qcero":
+			qcero = Double.parseDouble(separeStrings[1]);
+			break;
+			
+		case "actFeronoma":
+			actFeronoma = Double.parseDouble(separeStrings[1]);
+			break;
+			
+		case "actLocal":
+			actLocal = Double.parseDouble(separeStrings[1]);
+			break;
+			
+		case "paramLRC":
+			paramLRC = Double.parseDouble(separeStrings[1]);
 			break;
 
 		default:
@@ -79,5 +91,7 @@ public class Param {
 		return randGenerator.nextDouble();
 	}
 
-	
+	public void calculaFeromonaInicial(Data d) throws IOException {
+		feromonaInicial = 1/(tamPoblacion*AlgGR_Clase04_GrupoCF.ejecutar(d, this, null));
+	}
 }

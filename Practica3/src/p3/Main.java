@@ -10,11 +10,12 @@ public class Main {
 
 			Reader dataReader = new Reader(parametros.dataFile, "", Constants.DEFAULT_EXT);
 			Data problemData = dataReader.readData();
+			parametros.calculaFeromonaInicial(problemData);
 			Logger log = new Logger(parametros);
 
 			log.startTimer();
 
-			AlgGN_Clase04_Grupo2.ejecutar(problemData, parametros, log);
+			AlgSCH_Clase04_Grupo2.ejecutar(problemData, parametros, log);
 			log.endTimer();
 			log.write("Tiempo empleado: " + log.getDuration().toMillis() + " milliseconds");
 			log.close();
