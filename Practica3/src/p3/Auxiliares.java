@@ -111,8 +111,9 @@ public class Auxiliares {
 	 */
 	public static double calcularDistancia(List<Integer> seleccion, double[][] matriz) {
 		double suma = 0;
-		for (int i = 0; i < seleccion.size(); i++) {
-			for (int j = i + 1; j < seleccion.size(); j++) {
+		int tam = seleccion.size();
+		for (int i = 0; i < tam; i++) {
+			for (int j = i + 1; j < tam; j++) {
 				suma += valorMatriz(matriz, seleccion.get(i), seleccion.get(j));
 			}
 		}
@@ -129,9 +130,9 @@ public class Auxiliares {
 	 */
 	public static double calcularDistanciaElemento(int elemento, List<Integer> seleccion, double[][] matriz) {
 		float suma = 0;
-		for (int i = 0; i < seleccion.size(); i++) {
-			if (seleccion.get(i) != elemento) {
-				suma += valorMatriz(matriz, seleccion.get(i), elemento);
+		for (int elementoSeleccion: seleccion) {
+			if (elementoSeleccion != elemento) {
+				suma += valorMatriz(matriz, elementoSeleccion, elemento);
 			}
 		}
 		return suma;

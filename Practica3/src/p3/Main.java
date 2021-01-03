@@ -15,7 +15,7 @@ public class Main {
 		Reader params = new Reader(Constants.PARAM_NAME, "", Constants.DEFAULT_EXT);
 		try {
 			Param parametros = params.readParam();
-			String[] ficheros = { "GKD-c_1_n500_m50", "GKD-c_2_n500_m50", "GKD-c_3_n500_m50" };
+			String[] ficheros = { "GKD-c_1_n500_m50" };
 			int[] seed = { 77690720, 7769072, 20776907, 72077690, 7207769 };
 			int[] alpha = { 1, 1, 2 };
 			int[] beta = { 1, 2, 1 };
@@ -36,7 +36,7 @@ public class Main {
 						log.endTimer();
 						log.write("Tiempo empleado: " + log.getDuration().toMillis() + " milliseconds");
 						log.close();
-						System.out.println("Ejecucion " + (i + j + j2) + " acabada correctamente en "
+						System.out.println("Ejecucion " + (i*ficheros.length + j*seed.length + j2*alpha.length) + " acabada correctamente en "
 								+ log.getDuration().toMillis());
 					}
 				}

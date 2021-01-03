@@ -92,6 +92,6 @@ public class Param {
 	}
 
 	public void calculaFeromonaInicial(Data d) throws IOException {
-		feromonaInicial = 1/(tamPoblacion*AlgGR_Clase04_Grupo2.ejecutar(d, this, null));
+		feromonaInicial = AlgGR_Clase04_Grupo2.ejecutar(d, this, null);
 	}
 }

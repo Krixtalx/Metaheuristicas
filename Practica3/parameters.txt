@@ -1,7 +1,7 @@
 [Param]
 seed=776907208
 dataFile=GKD-c_1_n500_m50
-iteraciones=10000
+iteraciones=1500
 tamPoblacion=10
 alpha=1
 beta=1
