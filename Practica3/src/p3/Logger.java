@@ -9,6 +9,7 @@ import java.time.Instant;
 
 /**
  * Clase para la generaci�n de ficheros de historial de ejecuci�n
+ * 
  * @author Jose Antonio
  *
  */
@@ -20,10 +21,11 @@ public class Logger {
 	/**
 	 * Activa o desactiva la escritura
 	 */
-	boolean on = false;
+	boolean on = true;
 
 	public Logger(Param parametros) {
-		fileName = "log-"+ parametros.seed + "-" + "-" + parametros.dataFile+"-Elite" + ".txt";
+		fileName = "log//log-" + parametros.seed + "-Alpha_" + parametros.alpha + "-Beta_" + parametros.beta+"-"
+				+ parametros.dataFile + ".txt";
 		File fichero = new File(fileName);
 		FileWriter out = null;
 		try {

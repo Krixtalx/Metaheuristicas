@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class AlgGR_Clase04_GrupoCF {
+public class AlgGR_Clase04_Grupo2 {
 
 	/**
 	 * Obtiene una solucion al problema mediante un algoritmo voraz, seleccionando
