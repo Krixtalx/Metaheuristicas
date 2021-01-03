@@ -39,7 +39,7 @@ public class AlgSCH_Clase04_Grupo2 {
 		Instant fin = Instant.now();
 
 		// BUCLE PRINCIPAL
-		while (it < param.iteraciones && Duration.between(inicio, fin).toSeconds() < 5) {
+		while (it < param.iteraciones && Duration.between(inicio, fin).toSeconds() < 600) {
 			// Inicializar nueva población
 			colonia.clear();
 			ArrayList<Integer> hormiga;
@@ -60,11 +60,20 @@ public class AlgSCH_Clase04_Grupo2 {
 				actualizarLocal(param, matrizFeromonas, colonia);
 			}
 
+			// Calcula la mejor local
+			for(int i = 0; i < colonia.size(); i++) {
+				double costeNueva = Auxiliares.calcularDistancia(colonia.get(i), Data.valueMatrix);
+				if (costeNueva > mejorHormigaLocal.getKey()) {
+					mejorHormigaLocal.setKey(costeNueva);
+					mejorHormigaLocal.setValue(colonia.get(i));
+				}
+			}
+			
 			// Actualiza la feromona global y actualiza el mejor resultado global
 			demonio(param, matrizFeromonas, mejorHormigaLocal, mejorHormigaGlobal);
 
 			it++;
-			System.out.println(it);
+			//System.out.println(it);
 			log.write("It: " + it);
 			log.write("Mejor hormiga local: " + mejorHormigaLocal);
 			log.write("Mejor hormiga global: " + mejorHormigaGlobal);
@@ -155,12 +164,6 @@ public class AlgSCH_Clase04_Grupo2 {
 				if (probDesp <= prob) {
 					// Se desplaza
 					colonia.get(j).add(candidato);
-					double costeNueva = Auxiliares.calcularDistancia(colonia.get(j), Data.valueMatrix);
-					if (costeNueva > mejorHormigaLocal.getKey()) {
-						mejorHormigaLocal.setKey(costeNueva);
-						mejorHormigaLocal.setValue(colonia.get(j));
-					}
-
 					// Pasa a la siguiente hormiga
 					k = lrc.size();
 				}
